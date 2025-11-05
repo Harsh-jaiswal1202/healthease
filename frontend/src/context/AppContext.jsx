@@ -12,6 +12,26 @@ const AppContextProvider = (props) => {
     const [doctors, setDoctors] = useState([])
     const [token, setToken] = useState(localStorage.getItem('token') ? localStorage.getItem('token') : '')
     const [userData, setUserData] = useState(false)
+    
+    // Theme state
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        const savedTheme = localStorage.getItem('theme')
+        return savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    })
+
+    // Update theme in localStorage and DOM
+    useEffect(() => {
+        localStorage.setItem('theme', isDarkMode ? 'dark' : 'light')
+        if (isDarkMode) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    }, [isDarkMode])
+
+    const toggleTheme = () => {
+        setIsDarkMode(prev => !prev)
+    }
 
     // Getting Doctors using API
     const getDoctosData = async () => {
@@ -67,7 +87,8 @@ const AppContextProvider = (props) => {
         currencySymbol,
         backendUrl,
         token, setToken,
-        userData, setUserData, loadUserProfileData
+        userData, setUserData, loadUserProfileData,
+        isDarkMode, toggleTheme
     }
 
     return (

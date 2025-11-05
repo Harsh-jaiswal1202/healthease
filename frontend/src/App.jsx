@@ -1,6 +1,6 @@
 import React from 'react'
 import Navbar from './components/Navbar'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
 import Doctors from './pages/Doctors'
 import Login from './pages/Login'
@@ -16,10 +16,14 @@ import Verify from './pages/Verify'
 
 // const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 const App = () => {
+  const location = useLocation()
+  const isLoginPage = location.pathname === '/login'
+  const isHomePage = location.pathname === '/'
+
   return (
-    <div className='mx-4 sm:mx-[10%]'>
+    <div className='w-full bg-white dark:bg-gray-900 transition-colors duration-300 min-h-screen'>
       <ToastContainer />
-      <Navbar />
+      {!isLoginPage && <Navbar />}
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/doctors' element={<Doctors />} />
@@ -32,7 +36,7 @@ const App = () => {
         <Route path='/my-profile' element={<MyProfile />} />
         <Route path='/verify' element={<Verify />} />
       </Routes>
-      <Footer />
+      {isHomePage && <Footer />}
     </div>
   )
 }
