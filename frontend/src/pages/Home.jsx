@@ -16,7 +16,7 @@ const Home = () => {
   const containerRef = useRef(null)
 
   useEffect(() => {
-    // Set up smooth scroll animations
+    // Set up smooth scroll animations + parallax
     const ctx = gsap.context(() => {
       // Animate sections on scroll
       gsap.utils.toArray('.section-animate').forEach((section, index) => {
@@ -27,9 +27,24 @@ const Home = () => {
           ease: 'power3.out',
           scrollTrigger: {
             trigger: section,
-            start: 'top 80%',
-            end: 'bottom 20%',
-            toggleActions: 'play none none reverse'
+            start: 'top 85%',
+            end: 'bottom 60%',
+            scrub: 0.6
+          }
+        })
+      })
+
+      // Parallax layers
+      gsap.utils.toArray('.parallax-layer').forEach((layer) => {
+        const speed = Number(layer.getAttribute('data-parallax')) || 0.15
+        gsap.to(layer, {
+          y: () => -window.innerHeight * speed,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true
           }
         })
       })
@@ -43,19 +58,27 @@ const Home = () => {
       {/* Modern Healthcare UI Background Layers */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
         {/* Base gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white via-blue-50/30 to-purple-50/20 dark:from-gray-900 dark:via-gray-800/30 dark:to-gray-900/20"></div>
+        <div
+          className="parallax-layer absolute inset-0 bg-gradient-to-br from-white via-blue-50/30 to-purple-50/20 dark:from-gray-900 dark:via-gray-800/30 dark:to-gray-900/20"
+          data-parallax="0.08"
+        ></div>
         
         {/* Animated Grid Background - Subtle dot pattern */}
-        <GridBackground />
+        <div className="parallax-layer absolute inset-0" data-parallax="0.12">
+          <GridBackground />
+        </div>
         
         {/* Animated Particle Background - Soft bokeh effects */}
-        <AnimatedBackground variant="default" />
+        <div className="parallax-layer absolute inset-0" data-parallax="0.18">
+          <AnimatedBackground variant="default" />
+        </div>
         
         {/* Additional soft gradient orbs */}
         {[...Array(3)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute rounded-full blur-3xl opacity-10"
+            className="parallax-layer absolute rounded-full blur-3xl opacity-10"
+            data-parallax={0.2 + i * 0.08}
             style={{
               width: `${300 + i * 200}px`,
               height: `${300 + i * 200}px`,

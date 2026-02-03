@@ -4,6 +4,7 @@ import validator from "validator";
 import userModel from "../models/userModel.js";
 import doctorModel from "../models/doctorModel.js";
 import appointmentModel from "../models/appointmentModel.js";
+import reportModel from "../models/reportModel.js";
 import { v2 as cloudinary } from 'cloudinary'
 import stripe from "stripe";
 import razorpay from 'razorpay';
@@ -104,14 +105,52 @@ const updateProfile = async (req, res) => {
 
     try {
 
-        const { userId, name, phone, address, dob, gender } = req.body
+        const {
+            userId,
+            name,
+            phone,
+            address,
+            dob,
+            gender,
+            bloodGroup,
+            heightCm,
+            weightKg,
+            allergies,
+            chronicDiseases,
+            currentMedications,
+            emergencyContact,
+            notificationPreferences,
+            languagePreference,
+            darkModePreference
+        } = req.body
         const imageFile = req.file
 
         if (!name || !phone || !dob || !gender) {
             return res.json({ success: false, message: "Data Missing" })
         }
 
-        await userModel.findByIdAndUpdate(userId, { name, phone, address: JSON.parse(address), dob, gender })
+        const updatePayload = {
+            name,
+            phone,
+            address: JSON.parse(address),
+            dob,
+            gender,
+            bloodGroup: bloodGroup || '',
+            heightCm: heightCm || null,
+            weightKg: weightKg || null,
+            allergies: allergies ? JSON.parse(allergies) : [],
+            chronicDiseases: chronicDiseases ? JSON.parse(chronicDiseases) : [],
+            currentMedications: currentMedications || '',
+            emergencyContact: emergencyContact ? JSON.parse(emergencyContact) : undefined,
+            notificationPreferences: notificationPreferences ? JSON.parse(notificationPreferences) : undefined,
+            languagePreference: languagePreference || 'en',
+            darkModePreference: typeof darkModePreference !== 'undefined' ? darkModePreference === 'true' || darkModePreference === true : undefined
+        }
+
+        // Remove undefined keys so we don't overwrite with undefined
+        Object.keys(updatePayload).forEach((key) => updatePayload[key] === undefined && delete updatePayload[key])
+
+        await userModel.findByIdAndUpdate(userId, updatePayload)
 
         if (imageFile) {
 
@@ -235,6 +274,100 @@ const listAppointment = async (req, res) => {
     }
 }
 
+// API: Upload medical report or prescription
+const uploadReport = async (req, res) => {
+    try {
+        const { userId, title, fileType } = req.body;
+        const file = req.file;
+
+        if (!file) {
+            return res.json({ success: false, message: "No file uploaded" });
+        }
+
+        const uploadResult = await cloudinary.uploader.upload(file.path, {
+            resource_type: "auto"
+        });
+
+        const report = new reportModel({
+            userId,
+            title: title || file.originalname,
+            fileUrl: uploadResult.secure_url,
+            fileType: fileType || "report",
+        });
+
+        const saved = await report.save();
+
+        res.json({ success: true, message: "File uploaded", report: saved });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+// API: Get summarized dashboard data for profile page
+const getProfileDashboard = async (req, res) => {
+    try {
+        const { userId } = req.body;
+
+        const [userData, appointments, reports] = await Promise.all([
+            userModel.findById(userId).select("-password"),
+            appointmentModel.find({ userId }),
+            reportModel.find({ userId })
+        ]);
+
+        // Derive doctor interaction history
+        const doctorHistoryMap = {};
+        appointments.forEach(app => {
+            const doc = app.docData || {};
+            const id = app.docId;
+            if (!doctorHistoryMap[id]) {
+                doctorHistoryMap[id] = {
+                    docId: id,
+                    name: doc.name,
+                    speciality: doc.speciality,
+                    image: doc.image,
+                    lastVisit: app.slotDate,
+                    totalVisits: 1
+                };
+            } else {
+                doctorHistoryMap[id].totalVisits += 1;
+                doctorHistoryMap[id].lastVisit = app.slotDate;
+            }
+        });
+
+        const doctorHistory = Object.values(doctorHistoryMap);
+
+        // Payment summary derived from appointments
+        const payments = appointments
+            .filter(app => app.payment)
+            .map(app => ({
+                appointmentId: app._id,
+                amount: app.amount,
+                date: app.date,
+                status: app.cancelled ? "Refunded / Cancelled" : "Paid"
+            }));
+
+        res.json({
+            success: true,
+            data: {
+                userData,
+                stats: {
+                    totalVisits: appointments.length,
+                    completedVisits: appointments.filter(a => a.isCompleted).length,
+                    upcomingVisits: appointments.filter(a => !a.cancelled && !a.isCompleted && a.payment).length
+                },
+                appointments,
+                doctorHistory,
+                reports,
+                payments
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
 // API to make payment of appointment using razorpay
 const paymentRazorpay = async (req, res) => {
     try {
@@ -343,6 +476,110 @@ const verifyStripe = async (req, res) => {
 
 }
 
+// API: Change user email
+const changeEmail = async (req, res) => {
+    try {
+        const { userId, newEmail, password } = req.body
+
+        if (!newEmail || !password) {
+            return res.json({ success: false, message: 'Missing details' })
+        }
+
+        if (!validator.isEmail(newEmail)) {
+            return res.json({ success: false, message: 'Please enter a valid email' })
+        }
+
+        const user = await userModel.findById(userId)
+        if (!user) {
+            return res.json({ success: false, message: 'User not found' })
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password)
+        if (!isMatch) {
+            return res.json({ success: false, message: 'Invalid password' })
+        }
+
+        const existing = await userModel.findOne({ email: newEmail })
+        if (existing && existing._id.toString() !== userId) {
+            return res.json({ success: false, message: 'Email already in use' })
+        }
+
+        user.email = newEmail
+        await user.save()
+
+        res.json({ success: true, message: 'Email updated' })
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
+// API: Change user password
+const changePassword = async (req, res) => {
+    try {
+        const { userId, currentPassword, newPassword } = req.body
+
+        if (!currentPassword || !newPassword) {
+            return res.json({ success: false, message: 'Missing details' })
+        }
+
+        if (newPassword.length < 8) {
+            return res.json({ success: false, message: 'Please enter a strong password' })
+        }
+
+        const user = await userModel.findById(userId)
+        if (!user) {
+            return res.json({ success: false, message: 'User not found' })
+        }
+
+        const isMatch = await bcrypt.compare(currentPassword, user.password)
+        if (!isMatch) {
+            return res.json({ success: false, message: 'Invalid current password' })
+        }
+
+        const salt = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(newPassword, salt)
+
+        user.password = hashedPassword
+        await user.save()
+
+        res.json({ success: true, message: 'Password updated' })
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
+// API: Delete user account
+const deleteAccount = async (req, res) => {
+    try {
+        const { userId, password } = req.body
+
+        if (!password) {
+            return res.json({ success: false, message: 'Missing details' })
+        }
+
+        const user = await userModel.findById(userId)
+        if (!user) {
+            return res.json({ success: false, message: 'User not found' })
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password)
+        if (!isMatch) {
+            return res.json({ success: false, message: 'Invalid password' })
+        }
+
+        await appointmentModel.deleteMany({ userId })
+        await reportModel.deleteMany({ userId })
+        await userModel.findByIdAndDelete(userId)
+
+        res.json({ success: true, message: 'Account deleted' })
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
 export {
     loginUser,
     registerUser,
@@ -354,5 +591,10 @@ export {
     paymentRazorpay,
     verifyRazorpay,
     paymentStripe,
-    verifyStripe
+    verifyStripe,
+    getProfileDashboard,
+    uploadReport,
+    changeEmail,
+    changePassword,
+    deleteAccount
 }

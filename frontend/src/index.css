@@ -46,6 +46,19 @@ html {
   animation: gradient 3s linear infinite;
 }
 
+/* Ensure consistent pill button sizing when needed */
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  width: auto;
+  min-width: 0;
+  min-height: 0;
+  padding: 0 24px;
+  border-radius: 9999px;
+}
+
 @keyframes gradient {
   to {
     background-position: 200% center;

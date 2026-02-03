@@ -48,9 +48,9 @@ const SpecialityMenu = () => {
     >
       {/* Animated Background */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-100/40 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-blue-50/30 to-purple-50/30 rounded-full blur-3xl"></div>
+        <div className="parallax-layer absolute top-0 left-1/4 w-96 h-96 bg-blue-100/40 rounded-full blur-3xl animate-pulse" data-parallax="0.12"></div>
+        <div className="parallax-layer absolute bottom-0 right-1/4 w-96 h-96 bg-purple-100/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} data-parallax="0.16"></div>
+        <div className="parallax-layer absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-blue-50/30 to-purple-50/30 rounded-full blur-3xl" data-parallax="0.08"></div>
       </div>
       
       {/* Animated particles */}

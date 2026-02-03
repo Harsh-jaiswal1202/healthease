@@ -12,6 +12,7 @@ const AppContextProvider = (props) => {
     const [doctors, setDoctors] = useState([])
     const [token, setToken] = useState(localStorage.getItem('token') ? localStorage.getItem('token') : '')
     const [userData, setUserData] = useState(false)
+    const [profileDashboard, setProfileDashboard] = useState(null)
     
     // Theme state
     const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -57,12 +58,21 @@ const AppContextProvider = (props) => {
 
         try {
 
-            const { data } = await axios.get(backendUrl + '/api/user/get-profile', { headers: { token } })
+            const [profileRes, dashboardRes] = await Promise.all([
+                axios.get(backendUrl + '/api/user/get-profile', { headers: { token } }),
+                axios.get(backendUrl + '/api/user/profile-dashboard', { headers: { token } })
+            ])
 
-            if (data.success) {
-                setUserData(data.userData)
+            if (profileRes.data.success) {
+                setUserData(profileRes.data.userData)
             } else {
-                toast.error(data.message)
+                toast.error(profileRes.data.message)
+            }
+
+            if (dashboardRes.data.success) {
+                setProfileDashboard(dashboardRes.data.data)
+            } else {
+                toast.error(dashboardRes.data.message)
             }
 
         } catch (error) {
@@ -88,6 +98,7 @@ const AppContextProvider = (props) => {
         backendUrl,
         token, setToken,
         userData, setUserData, loadUserProfileData,
+        profileDashboard,
         isDarkMode, toggleTheme
     }
 

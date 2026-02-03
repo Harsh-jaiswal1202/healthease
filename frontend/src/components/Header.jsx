@@ -51,7 +51,9 @@ const Header = () => {
       className='relative flex flex-col md:flex-row flex-wrap bg-gradient-to-br from-primary via-primary to-purple-600 overflow-visible shadow-2xl mt-0 mb-10 rounded-none'
     >
       {/* Animated Background */}
-      <AnimatedBackground variant="intense" />
+      <div className="absolute inset-0">
+        <AnimatedBackground variant="intense" />
+      </div>
       
       {/* Additional animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

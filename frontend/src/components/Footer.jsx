@@ -197,47 +197,7 @@ const Footer = () => {
           </motion.div>
         </div>
 
-        {/* Footer Bottom */}
-        <motion.div
-          className='max-w-7xl mx-auto mt-8 pt-6 border-t border-white/10 dark:border-gray-700'
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
-          <div className='flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6'>
-            <p className='text-white/70 dark:text-gray-400 text-base text-center sm:text-left'>
-              Copyright 2024 © HealthEase.com - All Right Reserved.
-            </p>
-            <div className='flex flex-wrap gap-4 sm:gap-6 justify-center'>
-              <a
-                href='#'
-                className='text-white/60 dark:text-gray-500 hover:text-cyan-400 transition-colors duration-300 text-base'
-              >
-                Terms of Service
-              </a>
-              <a
-                href='#'
-                className='text-white/60 dark:text-gray-500 hover:text-cyan-400 transition-colors duration-300 text-base'
-              >
-                Privacy Policy
-              </a>
-              <a
-                href='#'
-                className='text-white/60 dark:text-gray-500 hover:text-cyan-400 transition-colors duration-300 text-base'
-              >
-                Cookie Policy
-              </a>
-              <a
-                href='#'
-                className='text-white/60 dark:text-gray-500 hover:text-cyan-400 transition-colors duration-300 text-base'
-              >
-                Disclaimer
-              </a>
-            </div>
-          </div>
-        </motion.div>
-      </div>
+</div>
     </footer>
   )
 }
