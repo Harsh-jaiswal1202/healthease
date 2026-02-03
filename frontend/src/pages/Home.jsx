@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import Header from '../components/Header'
 import SpecialityMenu from '../components/SpecialityMenu'
 import TopDoctors from '../components/TopDoctors'
+import HowItWorks from '../components/HowItWorks'
 import Banner from '../components/Banner'
 import AnimatedBackground from '../components/AnimatedBackground'
 import GridBackground from '../components/GridBackground'
@@ -89,7 +90,10 @@ const Home = () => {
           <SpecialityMenu />
         </div>
         <div className="section-animate">
-          <TopDoctors />
+          <TopDoctors compact />
+        </div>
+        <div className="section-animate">
+          <HowItWorks />
         </div>
         <div className="section-animate">
           <Banner />

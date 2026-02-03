@@ -54,7 +54,7 @@ const Banner = () => {
   return (
     <div 
       ref={bannerRef}
-      className='relative flex flex-col md:flex-row bg-gradient-to-br from-primary via-purple-600 to-blue-600 overflow-visible shadow-2xl px-6 sm:px-10 md:px-14 lg:px-16 my-20 rounded-none md:rounded-3xl'
+      className='relative flex flex-col md:flex-row bg-gradient-to-br from-primary via-purple-600 to-blue-600 overflow-visible shadow-2xl px-6 sm:px-10 md:px-14 lg:px-16 mt-0 mb-0'
     >
       {/* Animated Background */}
       <AnimatedBackground variant="intense" />

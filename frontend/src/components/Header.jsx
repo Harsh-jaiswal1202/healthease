@@ -48,13 +48,13 @@ const Header = () => {
   return (
     <div 
       ref={headerRef}
-      className='relative flex flex-col md:flex-row flex-wrap bg-gradient-to-br from-primary via-primary to-purple-600 overflow-visible shadow-2xl my-10 rounded-none md:rounded-2xl'
+      className='relative flex flex-col md:flex-row flex-wrap bg-gradient-to-br from-primary via-primary to-purple-600 overflow-visible shadow-2xl mt-0 mb-10 rounded-none'
     >
       {/* Animated Background */}
       <AnimatedBackground variant="intense" />
       
       {/* Additional animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
           className="absolute -top-20 -left-20 w-96 h-96 bg-white/10 rounded-full blur-3xl"
           animate={{
@@ -113,20 +113,20 @@ const Header = () => {
       <div className='relative z-10 md:w-1/2 flex flex-col items-start justify-center gap-6 py-12 px-6 md:px-10 lg:px-20 m-auto md:py-[10vw] md:mb-[-30px]'>
         <div ref={textRef}>
           <motion.h1 
-            className='text-4xl md:text-5xl lg:text-6xl text-white font-bold leading-tight md:leading-tight lg:leading-tight'
+            className='text-4xl md:text-5xl lg:text-6xl text-white font-extrabold leading-tight md:leading-tight lg:leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)]'
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
             Book Appointment <br />
-            <span className="bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+            <span className="text-white">
               With Trusted Doctors
             </span>
           </motion.h1>
         </div>
         
-        <motion.div 
-          className='flex flex-col md:flex-row items-center gap-4 text-white/90 text-sm font-light'
+          <motion.div 
+          className='flex flex-col md:flex-row items-center gap-4 text-white/95 text-sm font-light drop-shadow-[0_3px_10px_rgba(0,0,0,0.6)]'
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.6 }}

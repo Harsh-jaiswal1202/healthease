@@ -18,7 +18,7 @@ const Navbar = () => {
   }
 
   return (
-    <div className='flex items-center justify-between text-sm py-4 mb-5 border-b border-b-[#ADADAD] dark:border-b-gray-700 bg-white dark:bg-gray-900 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16'>
+    <div className='flex items-center justify-between text-sm py-4 mb-0 border-b border-b-[#ADADAD] dark:border-b-gray-700 bg-white dark:bg-gray-900 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16'>
       <div className='flex items-center gap-4'>
         <img onClick={() => navigate('/')} className='w-44 cursor-pointer' src={assets.icon} alt="" />
         <button
