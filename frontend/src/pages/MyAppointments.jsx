@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { AppContext } from '../context/AppContext'
 import axios from 'axios'
@@ -124,36 +125,106 @@ const MyAppointments = () => {
     }, [token])
 
     return (
-        <div>
-            <p className='pb-3 mt-12 text-lg font-medium text-gray-600 border-b'>My appointments</p>
-            <div className=''>
-                {appointments.map((item, index) => (
-                    <div key={index} className='grid grid-cols-[1fr_2fr] gap-4 sm:flex sm:gap-6 py-4 border-b'>
-                        <div>
-                            <img className='w-36 bg-[#EAEFFF]' src={item.docData.image} alt="" />
-                        </div>
-                        <div className='flex-1 text-sm text-[#5E5E5E]'>
-                            <p className='text-[#262626] text-base font-semibold'>{item.docData.name}</p>
-                            <p>{item.docData.speciality}</p>
-                            <p className='text-[#464646] font-medium mt-1'>Address:</p>
-                            <p className=''>{item.docData.address.line1}</p>
-                            <p className=''>{item.docData.address.line2}</p>
-                            <p className=' mt-1'><span className='text-sm text-[#3C3C3C] font-medium'>Date & Time:</span> {slotDateFormat(item.slotDate)} |  {item.slotTime}</p>
-                        </div>
-                        <div></div>
-                        <div className='flex flex-col gap-2 justify-end text-sm text-center'>
-                            {!item.cancelled && !item.payment && !item.isCompleted && payment !== item._id && <button onClick={() => setPayment(item._id)} className='text-[#696969] sm:min-w-48 py-2 border rounded hover:bg-primary hover:text-white transition-all duration-300'>Pay Online</button>}
-                            {!item.cancelled && !item.payment && !item.isCompleted && payment === item._id && <button onClick={() => appointmentStripe(item._id)} className='text-[#696969] sm:min-w-48 py-2 border rounded hover:bg-gray-100 hover:text-white transition-all duration-300 flex items-center justify-center'><img className='max-w-20 max-h-5' src={assets.stripe_logo} alt="" /></button>}
-                            {!item.cancelled && !item.payment && !item.isCompleted && payment === item._id && <button onClick={() => appointmentRazorpay(item._id)} className='text-[#696969] sm:min-w-48 py-2 border rounded hover:bg-gray-100 hover:text-white transition-all duration-300 flex items-center justify-center'><img className='max-w-20 max-h-5' src={assets.razorpay_logo} alt="" /></button>}
-                            {!item.cancelled && item.payment && !item.isCompleted && <button className='sm:min-w-48 py-2 border rounded text-[#696969]  bg-[#EAEFFF]'>Paid</button>}
-
-                            {item.isCompleted && <button className='sm:min-w-48 py-2 border border-green-500 rounded text-green-500'>Completed</button>}
-
-                            {!item.cancelled && !item.isCompleted && <button onClick={() => cancelAppointment(item._id)} className='text-[#696969] sm:min-w-48 py-2 border rounded hover:bg-red-600 hover:text-white transition-all duration-300'>Cancel appointment</button>}
-                            {item.cancelled && !item.isCompleted && <button className='sm:min-w-48 py-2 border border-red-500 rounded text-red-500'>Appointment cancelled</button>}
-                        </div>
+        <div className="min-h-screen bg-slate-50/80 dark:bg-gray-950 px-4 sm:px-6 lg:px-10 py-10">
+            <div className="max-w-6xl mx-auto">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8 bg-white/80 dark:bg-gray-900/80 backdrop-blur border border-slate-200/60 dark:border-gray-800/60 rounded-3xl p-6 shadow-[0_12px_40px_-30px_rgba(15,23,42,0.45)]">
+                    <div>
+                        <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.24em]">Appointments</p>
+                        <h1 className="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-white mt-2">My appointments</h1>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                            Track upcoming visits, payments, and history.
+                        </p>
                     </div>
-                ))}
+                </div>
+
+                <div className="grid gap-6">
+                    {appointments.map((item, index) => (
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, y: 14 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.45, delay: index * 0.06 }}
+                            className="relative overflow-hidden bg-white/90 backdrop-blur border border-slate-200/60 dark:border-gray-800/60 shadow-[0_18px_60px_-32px_rgba(15,23,42,0.5)] rounded-[28px] p-6 transition-all hover:-translate-y-0.5 hover:shadow-[0_24px_70px_-36px_rgba(15,23,42,0.55)]"
+                        >
+                            <div className="pointer-events-none absolute -top-24 -right-20 h-56 w-56 rounded-full bg-gradient-to-br from-primary/10 via-cyan-500/10 to-transparent blur-3xl"></div>
+                            <div className="pointer-events-none absolute -bottom-24 -left-16 h-48 w-48 rounded-full bg-gradient-to-br from-emerald-400/10 via-sky-400/10 to-transparent blur-3xl"></div>
+
+                            <div className="relative flex flex-col lg:flex-row gap-6">
+                                <div className="flex items-start gap-5 flex-1">
+                                    <div className="bg-slate-50 rounded-2xl p-2 ring-1 ring-slate-200/70 shadow-[0_10px_30px_-20px_rgba(15,23,42,0.4)]">
+                                        <img className="w-28 h-28 object-cover rounded-2xl" src={item.docData.image} alt="" />
+                                    </div>
+                                    <div className="flex-1 text-sm text-slate-600">
+                                        <p className="text-slate-900 text-lg font-semibold">{item.docData.name}</p>
+                                        <p className="text-slate-500">{item.docData.speciality}</p>
+                                        <div className="mt-3 rounded-2xl border border-slate-200/60 bg-white/80 px-4 py-3 shadow-[0_10px_30px_-22px_rgba(15,23,42,0.35)]">
+                                            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Address</p>
+                                            <p className="text-slate-700 mt-1">{item.docData.address.line1}</p>
+                                            <p className="text-slate-500">{item.docData.address.line2}</p>
+                                        </div>
+                                        <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-slate-100 text-slate-600 px-4 py-1.5 text-xs">
+                                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                                            <span className="font-semibold text-slate-700">Date & Time:</span>
+                                            {slotDateFormat(item.slotDate)} | {item.slotTime}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col gap-2 justify-end text-sm text-center lg:min-w-[220px]">
+                                    {!item.cancelled && !item.payment && !item.isCompleted && payment !== item._id && (
+                                        <button
+                                            onClick={() => setPayment(item._id)}
+                                            className="w-full py-2.5 rounded-full bg-gradient-to-r from-primary to-cyan-500 text-white font-semibold shadow-[0_10px_30px_-20px_rgba(59,130,246,0.8)] hover:opacity-95 transition-all"
+                                        >
+                                            Pay Online
+                                        </button>
+                                    )}
+                                    {!item.cancelled && !item.payment && !item.isCompleted && payment === item._id && (
+                                        <button
+                                            onClick={() => appointmentStripe(item._id)}
+                                            className="w-full py-2.5 rounded-full border border-slate-200/70 bg-white/80 hover:bg-slate-50 transition-all flex items-center justify-center"
+                                        >
+                                            <img className="max-w-20 max-h-5" src={assets.stripe_logo} alt="" />
+                                        </button>
+                                    )}
+                                    {!item.cancelled && !item.payment && !item.isCompleted && payment === item._id && (
+                                        <button
+                                            onClick={() => appointmentRazorpay(item._id)}
+                                            className="w-full py-2.5 rounded-full border border-slate-200/70 bg-white/80 hover:bg-slate-50 transition-all flex items-center justify-center"
+                                        >
+                                            <img className="max-w-20 max-h-5" src={assets.razorpay_logo} alt="" />
+                                        </button>
+                                    )}
+                                    {!item.cancelled && item.payment && !item.isCompleted && (
+                                        <button className="w-full py-2.5 rounded-full bg-emerald-50 ring-1 ring-emerald-200/70 text-emerald-700 font-semibold">
+                                            Paid
+                                        </button>
+                                    )}
+
+                                    {item.isCompleted && (
+                                        <button className="w-full py-2.5 rounded-full border border-emerald-500 text-emerald-600 font-semibold">
+                                            Completed
+                                        </button>
+                                    )}
+
+                                    {!item.cancelled && !item.isCompleted && (
+                                        <button
+                                            onClick={() => cancelAppointment(item._id)}
+                                            className="w-full py-2.5 rounded-full border border-rose-200 text-rose-600 hover:bg-rose-500 hover:text-white transition-all"
+                                        >
+                                            Cancel appointment
+                                        </button>
+                                    )}
+                                    {item.cancelled && !item.isCompleted && (
+                                        <button className="w-full py-2.5 rounded-full border border-rose-500 text-rose-600">
+                                            Appointment cancelled
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
             </div>
         </div>
     )
