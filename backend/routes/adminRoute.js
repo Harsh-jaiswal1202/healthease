@@ -1,11 +1,15 @@
 import express from 'express';
-import { loginAdmin, appointmentsAdmin, appointmentCancel, addDoctor, allDoctors, adminDashboard, getDoctorById, updateDoctor, updateDoctorVerification, updateDoctorStatus, deactivateDoctor, getAdminProfile, changeAdminEmail, changeAdminPassword, deleteAdminAccount } from '../controllers/adminController.js';
+import { loginAdmin, googleLoginAdmin, forgotAdminPassword, verifyAdminOtp, resetAdminPassword, appointmentsAdmin, appointmentCancel, addDoctor, allDoctors, adminDashboard, getDoctorById, updateDoctor, updateDoctorVerification, updateDoctorStatus, deactivateDoctor, getAdminProfile, changeAdminEmail, changeAdminPassword, deleteAdminAccount } from '../controllers/adminController.js';
 import { changeAvailablity } from '../controllers/doctorController.js';
 import authAdmin from '../middleware/authAdmin.js';
 import upload from '../middleware/multer.js';
 const adminRouter = express.Router();
 
 adminRouter.post("/login", loginAdmin)
+adminRouter.post("/google-login", googleLoginAdmin)
+adminRouter.post("/forgot-password", forgotAdminPassword)
+adminRouter.post("/verify-otp", verifyAdminOtp)
+adminRouter.post("/reset-password", resetAdminPassword)
 adminRouter.post(
     "/add-doctor",
     authAdmin,

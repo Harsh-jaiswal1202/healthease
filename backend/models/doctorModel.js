@@ -43,6 +43,8 @@ const doctorSchema = new mongoose.Schema({
     status: { type: String, enum: ["draft", "published"], default: "published" },
     verificationStatus: { type: String, enum: ["pending", "verified"], default: "pending" },
     profileCompletion: { type: Number, default: 0 },
+    resetOtpHash: { type: String, default: '' },
+    resetOtpExpires: { type: Number, default: 0 },
     date: { type: Number, required: true },
 }, { minimize: false })
 
