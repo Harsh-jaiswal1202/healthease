@@ -56,50 +56,6 @@ const MyAppointments = () => {
 
     }
 
-    const initPay = (order) => {
-        const options = {
-            key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-            amount: order.amount,
-            currency: order.currency,
-            name: 'Appointment Payment',
-            description: "Appointment Payment",
-            order_id: order.id,
-            receipt: order.receipt,
-            handler: async (response) => {
-
-                console.log(response)
-
-                try {
-                    const { data } = await axios.post(backendUrl + "/api/user/verifyRazorpay", response, { headers: { token } });
-                    if (data.success) {
-                        navigate('/my-appointments')
-                        getUserAppointments()
-                    }
-                } catch (error) {
-                    console.log(error)
-                    toast.error(error.message)
-                }
-            }
-        };
-        const rzp = new window.Razorpay(options);
-        rzp.open();
-    };
-
-    // Function to make payment using razorpay
-    const appointmentRazorpay = async (appointmentId) => {
-        try {
-            const { data } = await axios.post(backendUrl + '/api/user/payment-razorpay', { appointmentId }, { headers: { token } })
-            if (data.success) {
-                initPay(data.order)
-            }else{
-                toast.error(data.message)
-            }
-        } catch (error) {
-            console.log(error)
-            toast.error(error.message)
-        }
-    }
-
     // Function to make payment using stripe
     const appointmentStripe = async (appointmentId) => {
         try {
@@ -135,6 +91,12 @@ const MyAppointments = () => {
                             Track upcoming visits, payments, and history.
                         </p>
                     </div>
+                    <button
+                        onClick={() => { navigate('/doctors'); scrollTo(0, 0) }}
+                        className="self-start md:self-auto inline-flex items-center justify-center rounded-full border border-slate-200/80 dark:border-gray-700/80 bg-white/90 dark:bg-gray-900/80 px-5 py-2 text-sm font-semibold text-slate-700 dark:text-gray-200 shadow-sm hover:bg-slate-50 dark:hover:bg-gray-800 transition-all"
+                    >
+                        Back
+                    </button>
                 </div>
 
                 <div className="grid gap-6">
@@ -185,14 +147,6 @@ const MyAppointments = () => {
                                             className="w-full py-2.5 rounded-full border border-slate-200/70 bg-white/80 hover:bg-slate-50 transition-all flex items-center justify-center"
                                         >
                                             <img className="max-w-20 max-h-5" src={assets.stripe_logo} alt="" />
-                                        </button>
-                                    )}
-                                    {!item.cancelled && !item.payment && !item.isCompleted && payment === item._id && (
-                                        <button
-                                            onClick={() => appointmentRazorpay(item._id)}
-                                            className="w-full py-2.5 rounded-full border border-slate-200/70 bg-white/80 hover:bg-slate-50 transition-all flex items-center justify-center"
-                                        >
-                                            <img className="max-w-20 max-h-5" src={assets.razorpay_logo} alt="" />
                                         </button>
                                     )}
                                     {!item.cancelled && item.payment && !item.isCompleted && (

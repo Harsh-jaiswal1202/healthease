@@ -12,7 +12,37 @@ const doctorSchema = new mongoose.Schema({
     available: { type: Boolean, default: true },
     fees: { type: Number, required: true },
     slots_booked: { type: Object, default: {} },
-    address: { type: Object, required: true },
+    address: {
+        line1: { type: String, required: true },
+        line2: { type: String, required: true },
+        city: { type: String, default: "" },
+        state: { type: String, default: "" },
+        pincode: { type: String, default: "" },
+        clinicName: { type: String, default: "" }
+    },
+    location: {
+        lat: { type: Number, default: null },
+        lng: { type: Number, default: null }
+    },
+    availability: {
+        days: {
+            type: Array,
+            default: []
+        },
+        slotDuration: { type: Number, default: 30 },
+        breakMinutes: { type: Number, default: 0 }
+    },
+    languages: { type: Array, default: [] },
+    services: { type: Array, default: [] },
+    documents: {
+        licenseUrl: { type: String, default: "" },
+        degreeUrl: { type: String, default: "" },
+        idUrl: { type: String, default: "" },
+        certifications: { type: Array, default: [] }
+    },
+    status: { type: String, enum: ["draft", "published"], default: "published" },
+    verificationStatus: { type: String, enum: ["pending", "verified"], default: "pending" },
+    profileCompletion: { type: Number, default: 0 },
     date: { type: Number, required: true },
 }, { minimize: false })
 

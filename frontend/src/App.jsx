@@ -1,4 +1,4 @@
-import React from 'react'
+﻿import React from 'react'
 import Navbar from './components/Navbar'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
@@ -14,6 +14,10 @@ import Footer from './components/Footer'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Verify from './pages/Verify'
+import ProtectedRoute from './components/ProtectedRoute'
+import ForgotPassword from './pages/ForgotPassword'
+import VerifyOtp from './pages/VerifyOtp'
+import ResetPassword from './pages/ResetPassword'
 
 // const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 const App = () => {
@@ -27,8 +31,8 @@ const App = () => {
       {!isLoginPage && <Navbar />}
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/doctors' element={<Doctors />} />
-        <Route path='/doctors/:speciality' element={<Doctors />} />
+        <Route path='/doctors' element={<ProtectedRoute><Doctors /></ProtectedRoute>} />
+        <Route path='/doctors/:speciality' element={<ProtectedRoute><Doctors /></ProtectedRoute>} />
         <Route path='/login' element={<Login />} />
         <Route path='/about' element={<About />} />
         <Route path='/contact' element={<Contact />} />
@@ -37,6 +41,9 @@ const App = () => {
         <Route path='/my-profile' element={<MyProfile />} />
         <Route path='/settings' element={<Settings />} />
         <Route path='/verify' element={<Verify />} />
+        <Route path='/forgot-password' element={<ForgotPassword />} />
+        <Route path='/verify-otp' element={<VerifyOtp />} />
+        <Route path='/reset-password' element={<ResetPassword />} />
       </Routes>
       {isHomePage && <Footer />}
     </div>

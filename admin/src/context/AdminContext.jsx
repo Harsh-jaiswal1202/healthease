@@ -111,11 +111,89 @@ const AdminContextProvider = (props) => {
 
     }
 
+    const getDoctor = async (doctorId) => {
+        try {
+            const { data } = await axios.get(backendUrl + `/api/admin/doctor/${doctorId}`, { headers: { aToken } })
+            if (data.success) {
+                return data.doctor
+            }
+            toast.error(data.message)
+        } catch (error) {
+            toast.error(error.message)
+        }
+        return null
+    }
+
+    const updateDoctor = async (doctorId, payload) => {
+        try {
+            const { data } = await axios.put(backendUrl + `/api/admin/doctor/${doctorId}`, payload, { headers: { aToken } })
+            if (data.success) {
+                toast.success(data.message)
+                getAllDoctors()
+                return data.doctor
+            }
+            toast.error(data.message)
+        } catch (error) {
+            toast.error(error.message)
+        }
+        return null
+    }
+
+    const verifyDoctor = async (doctorId, verificationStatus) => {
+        try {
+            const { data } = await axios.post(backendUrl + `/api/admin/doctor/${doctorId}/verify`, { verificationStatus }, { headers: { aToken } })
+            if (data.success) {
+                toast.success(data.message)
+                getAllDoctors()
+                return data.doctor
+            }
+            toast.error(data.message)
+        } catch (error) {
+            toast.error(error.message)
+        }
+        return null
+    }
+
+    const setDoctorStatus = async (doctorId, status) => {
+        try {
+            const { data } = await axios.post(backendUrl + `/api/admin/doctor/${doctorId}/status`, { status }, { headers: { aToken } })
+            if (data.success) {
+                toast.success(data.message)
+                getAllDoctors()
+                return data.doctor
+            }
+            toast.error(data.message)
+        } catch (error) {
+            toast.error(error.message)
+        }
+        return null
+    }
+
+    const deactivateDoctor = async (doctorId) => {
+        try {
+            const { data } = await axios.post(backendUrl + `/api/admin/doctor/${doctorId}/deactivate`, {}, { headers: { aToken } })
+            if (data.success) {
+                toast.success(data.message)
+                getAllDoctors()
+                return data.doctor
+            }
+            toast.error(data.message)
+        } catch (error) {
+            toast.error(error.message)
+        }
+        return null
+    }
+
     const value = {
         aToken, setAToken,
         doctors,
         getAllDoctors,
         changeAvailability,
+        getDoctor,
+        updateDoctor,
+        verifyDoctor,
+        setDoctorStatus,
+        deactivateDoctor,
         appointments,
         getAllAppointments,
         getDashData,

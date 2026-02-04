@@ -8,6 +8,9 @@ import reportModel from "../models/reportModel.js";
 import { v2 as cloudinary } from 'cloudinary'
 import stripe from "stripe";
 import razorpay from 'razorpay';
+import { OAuth2Client } from "google-auth-library";
+import crypto from "crypto";
+import nodemailer from "nodemailer";
 
 // Gateway Initialize
 const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY)
@@ -15,6 +18,30 @@ const razorpayInstance = new razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
     key_secret: process.env.RAZORPAY_KEY_SECRET,
 })
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
+
+const otpExpiryMs = 10 * 60 * 1000
+
+const generateOtp = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString()
+}
+
+const hashOtp = (otp) => {
+    return crypto.createHash('sha256').update(otp).digest('hex')
+}
+
+const getEmailTransporter = () => {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        return null
+    }
+    return nodemailer.createTransport({
+        service: process.env.EMAIL_SERVICE || 'gmail',
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+        }
+    })
+}
 
 // API to register user
 const registerUser = async (req, res) => {
@@ -81,6 +108,185 @@ const loginUser = async (req, res) => {
         }
     } catch (error) {
         console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
+// API to login/register with Google
+const googleLogin = async (req, res) => {
+    try {
+        const { credential } = req.body
+
+        if (!credential) {
+            return res.json({ success: false, message: "Missing Google credential" })
+        }
+        if (!process.env.GOOGLE_CLIENT_ID) {
+            return res.json({ success: false, message: "GOOGLE_CLIENT_ID not configured" })
+        }
+
+        const ticket = await googleClient.verifyIdToken({
+            idToken: credential,
+            audience: process.env.GOOGLE_CLIENT_ID
+        })
+
+        const payload = ticket.getPayload()
+        const email = payload?.email
+
+        if (!email) {
+            return res.json({ success: false, message: "Google account email not available" })
+        }
+
+        let user = await userModel.findOne({ email })
+
+        if (!user) {
+            const randomPassword = crypto.randomBytes(32).toString('hex')
+            const salt = await bcrypt.genSalt(10)
+            const hashedPassword = await bcrypt.hash(randomPassword, salt)
+
+            user = await userModel.create({
+                name: payload?.name || email.split('@')[0],
+                email,
+                image: payload?.picture || undefined,
+                password: hashedPassword
+            })
+        }
+
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
+        res.json({ success: true, token })
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
+// API: Send reset OTP
+const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body
+
+        if (!email) {
+            return res.json({ success: false, message: "Email is required" })
+        }
+        if (!validator.isEmail(email)) {
+            return res.json({ success: false, message: "Please enter a valid email" })
+        }
+
+        const user = await userModel.findOne({ email })
+
+        if (!user) {
+            return res.json({ success: true, message: "If the email exists, an OTP has been sent." })
+        }
+
+        const otp = generateOtp()
+        user.resetOtpHash = hashOtp(otp)
+        user.resetOtpExpires = Date.now() + otpExpiryMs
+        await user.save()
+
+        const transporter = getEmailTransporter()
+        if (!transporter) {
+            return res.json({ success: false, message: "Email service not configured" })
+        }
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: "Your HealthEase OTP",
+            text: `Your OTP is ${otp}. It expires in 10 minutes.`,
+            html: `
+                <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                    <h2>HealthEase Password Reset</h2>
+                    <p>Your OTP is:</p>
+                    <div style="font-size: 22px; font-weight: bold; letter-spacing: 4px;">${otp}</div>
+                    <p>This OTP expires in 10 minutes.</p>
+                    <p>If you did not request this, please ignore this email.</p>
+                </div>
+            `
+        }
+
+        await transporter.sendMail(mailOptions)
+        res.json({ success: true, message: "OTP sent successfully" })
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
+// API: Verify OTP and return reset token
+const verifyOtp = async (req, res) => {
+    try {
+        const { email, otp } = req.body
+
+        if (!email || !otp) {
+            return res.json({ success: false, message: "Email and OTP are required" })
+        }
+
+        const user = await userModel.findOne({ email })
+        if (!user) {
+            return res.json({ success: false, message: "Invalid OTP" })
+        }
+
+        if (!user.resetOtpHash || !user.resetOtpExpires) {
+            return res.json({ success: false, message: "OTP not requested" })
+        }
+
+        if (Date.now() > user.resetOtpExpires) {
+            return res.json({ success: false, message: "OTP expired" })
+        }
+
+        const hashed = hashOtp(otp)
+        if (hashed !== user.resetOtpHash) {
+            return res.json({ success: false, message: "Invalid OTP" })
+        }
+
+        const resetToken = jwt.sign(
+            { id: user._id, purpose: "reset" },
+            process.env.JWT_SECRET,
+            { expiresIn: "10m" }
+        )
+
+        res.json({ success: true, resetToken })
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
+// API: Reset password using reset token
+const resetPassword = async (req, res) => {
+    try {
+        const { resetToken, newPassword } = req.body
+
+        if (!resetToken || !newPassword) {
+            return res.json({ success: false, message: "Missing details" })
+        }
+
+        if (newPassword.length < 8) {
+            return res.json({ success: false, message: "Please enter a strong password" })
+        }
+
+        const decoded = jwt.verify(resetToken, process.env.JWT_SECRET)
+        if (decoded.purpose !== "reset") {
+            return res.json({ success: false, message: "Invalid reset token" })
+        }
+
+        const user = await userModel.findById(decoded.id)
+        if (!user) {
+            return res.json({ success: false, message: "User not found" })
+        }
+
+        const salt = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(newPassword, salt)
+        user.password = hashedPassword
+        user.resetOtpHash = ''
+        user.resetOtpExpires = 0
+        await user.save()
+
+        res.json({ success: true, message: "Password updated" })
+    } catch (error) {
+        console.log(error)
+        if (error.name === "TokenExpiredError") {
+            return res.json({ success: false, message: "Reset token expired" })
+        }
         res.json({ success: false, message: error.message })
     }
 }
@@ -583,6 +789,10 @@ const deleteAccount = async (req, res) => {
 export {
     loginUser,
     registerUser,
+    googleLogin,
+    forgotPassword,
+    verifyOtp,
+    resetPassword,
     getProfile,
     updateProfile,
     bookAppointment,

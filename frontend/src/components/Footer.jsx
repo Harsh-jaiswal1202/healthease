@@ -40,7 +40,7 @@ const Footer = () => {
               <h2 className='text-xl font-bold'>HealthEase</h2>
             </div>
             <p className='text-white/80 dark:text-gray-300 leading-6 mb-4 text-base'>
-              Your one-stop solution for all your healthcare needs. Our platform connects you with experienced doctors across various specialties, making it easy to book appointments online from the comfort of your home.
+              Your one-stop solution for all your healthcare needs. making it easy to book appointments online from the comfort of your home.
             </p>
             <div className='flex gap-4'>
               <motion.a
@@ -115,15 +115,6 @@ const Footer = () => {
                   className='flex items-center text-white/80 dark:text-gray-300 hover:text-cyan-400 transition-all duration-300 group text-base'
                 >
                   <i className='fas fa-chevron-right text-sm mr-2 group-hover:translate-x-1 transition-transform'></i>
-                  Delivery
-                </a>
-              </li>
-              <li>
-                <a
-                  href='#'
-                  className='flex items-center text-white/80 dark:text-gray-300 hover:text-cyan-400 transition-all duration-300 group text-base'
-                >
-                  <i className='fas fa-chevron-right text-sm mr-2 group-hover:translate-x-1 transition-transform'></i>
                   Privacy policy
                 </a>
               </li>
@@ -154,8 +145,7 @@ const Footer = () => {
               <li className='flex items-start'>
                 <i className='fas fa-map-marker-alt text-cyan-400 mr-4 mt-1 text-lg'></i>
                 <span className='text-white/80 dark:text-gray-300 leading-7 text-base'>
-                  123 Healthcare Street<br />
-                  Medical District, City 560001
+                  Greater Noida, Uttar Pradesh
                 </span>
               </li>
             </ul>

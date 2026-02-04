@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken"
+import adminModel from "../models/adminModel.js"
 
 // admin authentication middleware
 const authAdmin = async (req, res, next) => {
@@ -11,6 +12,16 @@ const authAdmin = async (req, res, next) => {
             return res.json({ success: false, message: 'JWT_SECRET not configured' })
         }
         const token_decode = jwt.verify(atoken, process.env.JWT_SECRET)
+
+        if (token_decode?.id) {
+            const admin = await adminModel.findById(token_decode.id)
+            if (!admin) {
+                return res.json({ success: false, message: 'Not Authorized Login Again' })
+            }
+            req.adminId = admin._id
+            return next()
+        }
+
         if (token_decode !== process.env.ADMIN_EMAIL + process.env.ADMIN_PASSWORD) {
             return res.json({ success: false, message: 'Not Authorized Login Again' })
         }

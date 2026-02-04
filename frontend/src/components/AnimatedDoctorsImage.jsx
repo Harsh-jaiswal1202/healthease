@@ -13,52 +13,13 @@ const doctorImages = [doc1, doc2, doc3, doc4, doc5, doc6]
 
 const AnimatedDoctorsImage = () => {
   return (
-    <div className="relative w-full h-full flex items-center justify-center" style={{ overflow: 'visible' }}>
+    <div className="relative w-full h-full flex items-center justify-center isolation-isolate" style={{ overflow: 'visible' }}>
       {/* Main doctor images in a modern layout */}
       <div className="relative w-full max-w-lg h-[500px] md:h-[600px]" style={{ overflow: 'visible' }}>
         
-        {/* Center large doctor image */}
-        <motion.div
-          className="doctor-card absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ 
-            opacity: 1, 
-            scale: 1,
-            y: [0, -8, 0]
-          }}
-          transition={{ 
-            opacity: { duration: 0.8, delay: 0.2 },
-            scale: { duration: 0.8, delay: 0.2 },
-            y: { duration: 3, repeat: Infinity, ease: "easeInOut" }
-          }}
-          whileHover={{ scale: 1.1, zIndex: 40 }}
-          style={{ 
-            willChange: 'transform',
-            opacity: 1,
-            visibility: 'visible',
-            display: 'block'
-          }}
-        >
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-purple-500/20 rounded-2xl blur-xl"></div>
-            <img
-              src={doctorImages[0]}
-              alt="Doctor"
-              className="w-48 md:w-56 h-56 md:h-64 object-cover rounded-2xl shadow-2xl border-4 border-white/50"
-              style={{ 
-                opacity: 1, 
-                visibility: 'visible',
-                display: 'block'
-              }}
-            />
-            {/* Glow effect */}
-            <div className="absolute -inset-2 bg-gradient-to-r from-primary to-purple-500 rounded-2xl opacity-0 hover:opacity-30 blur-xl transition-opacity duration-300"></div>
-          </div>
-        </motion.div>
-
         {/* Top left doctor */}
         <motion.div
-          className="doctor-card absolute top-10 left-4 md:left-10 z-20"
+          className="doctor-card absolute top-10 left-4 md:left-10 z-10"
           initial={{ opacity: 0, x: -30, y: -30 }}
           animate={{ 
             opacity: 1, 
@@ -95,7 +56,7 @@ const AnimatedDoctorsImage = () => {
 
         {/* Top right doctor */}
         <motion.div
-          className="doctor-card absolute top-10 right-4 md:right-10 z-20"
+          className="doctor-card absolute top-10 right-4 md:right-10 z-10"
           initial={{ opacity: 0, x: 30, y: -30 }}
           animate={{ 
             opacity: 1, 
@@ -132,7 +93,7 @@ const AnimatedDoctorsImage = () => {
 
         {/* Bottom left doctor */}
         <motion.div
-          className="doctor-card absolute bottom-10 left-4 md:left-10 z-20"
+          className="doctor-card absolute bottom-10 left-4 md:left-10 z-10"
           initial={{ opacity: 0, x: -30, y: 30 }}
           animate={{ 
             opacity: 1, 
@@ -169,7 +130,7 @@ const AnimatedDoctorsImage = () => {
 
         {/* Bottom right doctor */}
         <motion.div
-          className="doctor-card absolute bottom-10 right-4 md:right-10 z-20"
+          className="doctor-card absolute bottom-10 right-4 md:right-10 z-10"
           initial={{ opacity: 0, x: 30, y: 30 }}
           animate={{ 
             opacity: 1, 

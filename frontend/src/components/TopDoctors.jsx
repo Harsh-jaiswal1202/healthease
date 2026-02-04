@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react'
+﻿import React, { useContext, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AppContext } from '../context/AppContext'
 import { gsap } from 'gsap'
@@ -9,7 +9,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 const TopDoctors = ({ compact = false }) => {
   const navigate = useNavigate()
-  const { doctors } = useContext(AppContext)
+  const { doctors, token } = useContext(AppContext)
   const containerRef = useRef(null)
   const titleRef = useRef(null)
   const hasDoctors = doctors && doctors.length > 0
@@ -92,7 +92,14 @@ const TopDoctors = ({ compact = false }) => {
           Simply browse through our extensive list of trusted doctors.
         </p>
         <motion.button 
-          onClick={() => { navigate('/doctors'); scrollTo(0, 0) }} 
+          onClick={() => { 
+            if (!token) {
+              navigate('/login', { state: { initialTab: 'login' } })
+            } else {
+              navigate('/doctors')
+            }
+            scrollTo(0, 0)
+          }} 
           className='bg-gradient-to-r from-primary to-purple-600 text-white px-12 py-3 rounded-full mt-1 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden group'
           whileHover={{ scale: 1.05, y: -2 }}
           whileTap={{ scale: 0.95 }}

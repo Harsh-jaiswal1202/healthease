@@ -9,7 +9,7 @@ import { toast } from 'react-toastify'
 const Appointment = () => {
 
     const { docId } = useParams()
-    const { doctors, currencySymbol, backendUrl, token, getDoctosData } = useContext(AppContext)
+    const { doctors, backendUrl, token, getDoctosData } = useContext(AppContext)
     const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
 
     const [docInfo, setDocInfo] = useState(false)
@@ -175,7 +175,7 @@ const Appointment = () => {
                             </div>
 
                             <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-emerald-50 ring-1 ring-emerald-200/70 px-4 py-2 text-sm text-emerald-700 font-semibold">
-                                Appointment fee: {currencySymbol}{docInfo.fees}
+                                Appointment fee: {docInfo.fees}
                             </div>
                         </div>
                     </div>

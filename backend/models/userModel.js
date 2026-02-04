@@ -40,6 +40,8 @@ const userSchema = new mongoose.Schema({
 
     // Auth
     password: { type: String, required: true },
+    resetOtpHash: { type: String, default: '' },
+    resetOtpExpires: { type: Number, default: 0 },
 }, { minimize: false })
 
 const userModel = mongoose.models.user || mongoose.model("user", userSchema);

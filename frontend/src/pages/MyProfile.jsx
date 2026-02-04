@@ -12,7 +12,7 @@ const MyProfile = () => {
     const [isBloodGroupOpen, setIsBloodGroupOpen] = useState(false)
     const [isGenderOpen, setIsGenderOpen] = useState(false)
 
-    const { token, backendUrl, userData, setUserData, loadUserProfileData, profileDashboard, currencySymbol } = useContext(AppContext)
+    const { token, backendUrl, userData, setUserData, loadUserProfileData, profileDashboard } = useContext(AppContext)
     const navigate = useNavigate()
 
     const stats = profileDashboard?.stats || { totalVisits: 0, completedVisits: 0, upcomingVisits: 0 }
@@ -741,7 +741,7 @@ const MyProfile = () => {
                                 Payments Made
                             </p>
                             <p className="text-3xl font-semibold text-slate-900">
-                                {currencySymbol}{payments.reduce((acc, p) => acc + (p.amount || 0), 0)}
+                                {payments.reduce((acc, p) => acc + (p.amount || 0), 0)}
                             </p>
                             <p className="text-xs text-slate-500 mt-1">
                                 Across {payments.length} paid appointments
@@ -933,7 +933,7 @@ const MyProfile = () => {
                                         <div key={pay.appointmentId} className="flex items-center justify-between rounded-2xl border border-slate-200/60 dark:border-gray-800/60 bg-white/70 dark:bg-gray-900/60 px-4 py-3 shadow-[0_10px_30px_-22px_rgba(15,23,42,0.45)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_40px_-24px_rgba(15,23,42,0.5)]">
                                             <div>
                                                 <p className="text-gray-800 font-medium">
-                                                    {currencySymbol}{pay.amount}
+                                                    {pay.amount}
                                                 </p>
                                                 <p className="text-xs text-slate-400">
                                                     {new Date(pay.date).toLocaleDateString()}

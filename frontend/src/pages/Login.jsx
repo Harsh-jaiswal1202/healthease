@@ -1,10 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { AppContext } from '../context/AppContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { assets } from '../assets/assets'
 
 const Login = () => {
   const location = useLocation()
@@ -14,6 +13,8 @@ const Login = () => {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const googleBtnRef = useRef(null)
+  const googleInitRef = useRef(false)
 
   const navigate = useNavigate()
   const { backendUrl, token, setToken } = useContext(AppContext)
@@ -28,6 +29,64 @@ const Login = () => {
     const initialTab = location.state?.initialTab === 'signup' ? 'Sign Up' : 'Login'
     setState(initialTab)
   }, [setToken, location.state])
+
+  const handleGoogleLogin = async (response) => {
+    if (!response?.credential) {
+      toast.error('Google login failed. Please try again.')
+      return
+    }
+
+    try {
+      const { data } = await axios.post(backendUrl + '/api/user/google-login', {
+        credential: response.credential
+      })
+      if (data.success) {
+        localStorage.setItem('token', data.token)
+        setToken(data.token)
+        toast.success('Login successful!')
+        setTimeout(() => navigate('/'), 1000)
+      } else {
+        toast.error(data.message)
+      }
+    } catch (error) {
+      console.error('Google Login Error:', error)
+      toast.error(error.response?.data?.message || 'Google login failed. Please try again.')
+    }
+  }
+
+  useEffect(() => {
+    if (!import.meta.env.VITE_GOOGLE_CLIENT_ID) {
+      return
+    }
+
+    let attempts = 0
+    const interval = setInterval(() => {
+      attempts += 1
+      if (googleInitRef.current) {
+        clearInterval(interval)
+        return
+      }
+      if (window.google?.accounts?.id && googleBtnRef.current) {
+        window.google.accounts.id.initialize({
+          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+          callback: handleGoogleLogin
+        })
+        googleBtnRef.current.innerHTML = ''
+        window.google.accounts.id.renderButton(googleBtnRef.current, {
+          theme: 'outline',
+          size: 'large',
+          width: 280
+        })
+        googleInitRef.current = true
+        clearInterval(interval)
+      }
+      if (attempts > 20) {
+        clearInterval(interval)
+      }
+    }, 300)
+
+    return () => clearInterval(interval)
+  }, [])
 
   const onSubmitHandler = async (event) => {
     event.preventDefault()
@@ -77,11 +136,11 @@ const Login = () => {
   }
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4 relative'>
+    <div className='min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-3 sm:p-4 relative'>
       {/* Back Button */}
       <motion.button
         onClick={() => navigate('/')}
-        className='absolute top-6 left-6 md:top-8 md:left-8 flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-300 text-gray-700 hover:text-primary z-50'
+        className='hidden md:flex md:absolute md:top-8 md:left-8 items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-300 text-gray-700 hover:text-primary z-50 text-base'
         whileHover={{ scale: 1.05, x: -2 }}
         whileTap={{ scale: 0.95 }}
         initial={{ opacity: 0, x: -20 }}
@@ -98,7 +157,7 @@ const Login = () => {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
-        className='flex w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden min-h-[600px]'
+        className='flex w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden min-h-[520px] sm:min-h-[600px]'
       >
         {/* Welcome Section - Left Side */}
         <div className='hidden md:flex flex-1 bg-gradient-to-br from-primary via-purple-600 to-blue-600 text-white p-10 relative overflow-hidden'>
@@ -113,7 +172,6 @@ const Login = () => {
             className='relative z-10 flex flex-col justify-center h-full'
           >
             <div className='flex items-center mb-8'>
-              <img src={assets.icon} className='w-12 h-12 mr-3' alt="Logo" />
               <h1 className='text-3xl font-bold'>HealthEase</h1>
             </div>
             
@@ -147,10 +205,25 @@ const Login = () => {
         </div>
 
         {/* Form Section - Right Side */}
-        <div className='flex-1 p-8 md:p-12 flex flex-col justify-center'>
-          <div className='w-full max-w-md mx-auto'>
+        <div className='flex-1 p-5 sm:p-8 md:p-12 flex flex-col justify-center min-w-0'>
+          <div className='w-full max-w-md mx-auto min-w-0'>
+            <div className='md:hidden mb-6'>
+              <motion.button
+                onClick={() => navigate('/')}
+                className='flex items-center justify-center w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-300 text-gray-700 hover:text-primary'
+                whileHover={{ scale: 1.05, x: -2 }}
+                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                  <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M10 19l-7-7m0 0l7-7m-7 7h18' />
+                </svg>
+              </motion.button>
+            </div>
             {/* Toggle Buttons */}
-            <div className='flex mb-8 border-b border-gray-200'>
+            <div className='flex mb-6 sm:mb-8 border-b border-gray-200'>
               <button
                 onClick={() => setState('Login')}
                 className={`flex-1 py-3 text-center font-semibold transition-all duration-300 ${
@@ -174,12 +247,12 @@ const Login = () => {
             </div>
 
             {/* Form */}
-            <form onSubmit={onSubmitHandler} className='space-y-5'>
+            <form onSubmit={onSubmitHandler} className='space-y-4 sm:space-y-5 w-full'>
               <motion.h2
                 key={state}
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className='text-3xl font-bold text-gray-800 mb-6'
+                className='text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-6'
               >
                 {state === 'Sign Up' ? 'Create Account' : 'Welcome Back'}
               </motion.h2>
@@ -201,7 +274,7 @@ const Login = () => {
                     placeholder='Full Name'
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className='w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all'
+                    className='w-full max-w-full box-border pl-12 pr-4 py-3 sm:py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all'
                     required
                   />
                 </motion.div>
@@ -218,7 +291,7 @@ const Login = () => {
                   placeholder='Email Address'
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className='w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all'
+                  className='w-full max-w-full box-border pl-12 pr-4 py-3 sm:py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all'
                   required
                 />
               </div>
@@ -234,7 +307,7 @@ const Login = () => {
                   placeholder='Password'
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className='w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all'
+                  className='w-full max-w-full box-border pl-12 pr-4 py-3 sm:py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all'
                   required
                 />
               </div>
@@ -245,20 +318,36 @@ const Login = () => {
                     <input type='checkbox' className='mr-2' />
                     Remember me
                   </label>
-                  <a href='#' className='text-primary hover:underline'>Forgot Password?</a>
+                  <button
+                    type='button'
+                    onClick={() => navigate('/forgot-password')}
+                    className='text-primary hover:underline'
+                  >
+                    Forgot Password?
+                  </button>
                 </div>
               )}
 
               <button
                 type='submit'
                 disabled={loading}
-                className={`w-full py-4 bg-gradient-to-r from-primary to-purple-600 text-white rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] ${
+                className={`w-full max-w-full box-border py-3.5 sm:py-4 bg-gradient-to-r from-primary to-purple-600 text-white rounded-xl font-semibold text-base sm:text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] ${
                   loading ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
                 {loading ? 'Please wait...' : (state === 'Sign Up' ? 'Create Account' : 'Login')}
               </button>
             </form>
+
+            <div className='my-6 flex items-center gap-3 text-xs text-gray-400'>
+              <span className='h-px w-full bg-gray-200'></span>
+              OR
+              <span className='h-px w-full bg-gray-200'></span>
+            </div>
+
+            <div className='flex justify-center'>
+              <div ref={googleBtnRef}></div>
+            </div>
 
             <div className='mt-6 text-center text-sm text-gray-600'>
               {state === 'Sign Up' ? (
