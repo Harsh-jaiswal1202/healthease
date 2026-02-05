@@ -72,6 +72,22 @@ const MyAppointments = () => {
         }
     }
 
+    // Function to select cash payment
+    const appointmentCash = async (appointmentId) => {
+        try {
+            const { data } = await axios.post(backendUrl + '/api/user/payment-cash', { appointmentId }, { headers: { token } })
+            if (data.success) {
+                toast.success(data.message)
+                getUserAppointments()
+            } else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            console.log(error)
+            toast.error(error.message)
+        }
+    }
+
 
 
     useEffect(() => {
@@ -143,12 +159,25 @@ const MyAppointments = () => {
                                 </div>
 
                                 <div className="w-full lg:w-auto flex flex-row flex-wrap lg:flex-col gap-2 justify-start lg:justify-end text-sm text-center lg:min-w-[220px]">
-                                    {!item.cancelled && !item.payment && !item.isCompleted && payment !== item._id && (
+                                    {!item.cancelled && !item.payment && !item.isCompleted && item.paymentMethod === 'cash' && (
+                                        <button className="w-full lg:w-full flex-1 lg:flex-none py-2.5 rounded-full border border-amber-200 bg-amber-50 text-amber-700 font-semibold">
+                                            Cash on Visit
+                                        </button>
+                                    )}
+                                    {!item.cancelled && !item.payment && !item.isCompleted && payment !== item._id && item.paymentMethod !== 'cash' && (
                                         <button
                                             onClick={() => setPayment(item._id)}
                                             className="w-full lg:w-full flex-1 lg:flex-none py-2.5 rounded-full bg-gradient-to-r from-primary to-cyan-500 text-white font-semibold shadow-[0_10px_30px_-20px_rgba(59,130,246,0.8)] hover:opacity-95 transition-all"
                                         >
                                             Pay Online
+                                        </button>
+                                    )}
+                                    {!item.cancelled && !item.payment && !item.isCompleted && payment !== item._id && item.paymentMethod !== 'cash' && (
+                                        <button
+                                            onClick={() => appointmentCash(item._id)}
+                                            className="w-full lg:w-full flex-1 lg:flex-none py-2.5 rounded-full border border-amber-200 text-amber-700 hover:bg-amber-50 transition-all"
+                                        >
+                                            Pay Cash
                                         </button>
                                     )}
                                     {!item.cancelled && !item.payment && !item.isCompleted && payment === item._id && (

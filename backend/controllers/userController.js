@@ -7,17 +7,12 @@ import appointmentModel from "../models/appointmentModel.js";
 import reportModel from "../models/reportModel.js";
 import { v2 as cloudinary } from 'cloudinary'
 import stripe from "stripe";
-import razorpay from 'razorpay';
 import { OAuth2Client } from "google-auth-library";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 
 // Gateway Initialize
 const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY)
-const razorpayInstance = new razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET,
-})
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
 const otpExpiryMs = 10 * 60 * 1000
@@ -414,7 +409,8 @@ const bookAppointment = async (req, res) => {
             amount: docData.fees,
             slotTime,
             slotDate,
-            date: Date.now()
+            date: Date.now(),
+            paymentMethod: "unpaid"
         }
 
         const newAppointment = new appointmentModel(appointmentData)
@@ -574,53 +570,6 @@ const getProfileDashboard = async (req, res) => {
     }
 }
 
-// API to make payment of appointment using razorpay
-const paymentRazorpay = async (req, res) => {
-    try {
-
-        const { appointmentId } = req.body
-        const appointmentData = await appointmentModel.findById(appointmentId)
-
-        if (!appointmentData || appointmentData.cancelled) {
-            return res.json({ success: false, message: 'Appointment Cancelled or not found' })
-        }
-
-        // creating options for razorpay payment
-        const options = {
-            amount: appointmentData.amount * 100,
-            currency: process.env.CURRENCY,
-            receipt: appointmentId,
-        }
-
-        // creation of an order
-        const order = await razorpayInstance.orders.create(options)
-
-        res.json({ success: true, order })
-
-    } catch (error) {
-        console.log(error)
-        res.json({ success: false, message: error.message })
-    }
-}
-
-// API to verify payment of razorpay
-const verifyRazorpay = async (req, res) => {
-    try {
-        const { razorpay_order_id } = req.body
-        const orderInfo = await razorpayInstance.orders.fetch(razorpay_order_id)
-
-        if (orderInfo.status === 'paid') {
-            await appointmentModel.findByIdAndUpdate(orderInfo.receipt, { payment: true })
-            res.json({ success: true, message: "Payment Successful" })
-        }
-        else {
-            res.json({ success: false, message: 'Payment Failed' })
-        }
-    } catch (error) {
-        console.log(error)
-        res.json({ success: false, message: error.message })
-    }
-}
 
 // API to make payment of appointment using Stripe
 const paymentStripe = async (req, res) => {
@@ -669,7 +618,7 @@ const verifyStripe = async (req, res) => {
         const { appointmentId, success } = req.body
 
         if (success === "true") {
-            await appointmentModel.findByIdAndUpdate(appointmentId, { payment: true })
+            await appointmentModel.findByIdAndUpdate(appointmentId, { payment: true, paymentMethod: "online" })
             return res.json({ success: true, message: 'Payment Successful' })
         }
 
@@ -680,6 +629,36 @@ const verifyStripe = async (req, res) => {
         res.json({ success: false, message: error.message })
     }
 
+}
+
+// Razorpay payment endpoints removed (temporarily)
+
+// API to select cash payment method for appointment
+const paymentCash = async (req, res) => {
+    try {
+        const { userId, appointmentId } = req.body
+
+        const appointmentData = await appointmentModel.findById(appointmentId)
+
+        if (!appointmentData || appointmentData.cancelled) {
+            return res.json({ success: false, message: 'Appointment Cancelled or not found' })
+        }
+
+        if (appointmentData.userId !== userId) {
+            return res.json({ success: false, message: 'Unauthorized action' })
+        }
+
+        if (appointmentData.payment) {
+            return res.json({ success: false, message: 'Appointment already paid online' })
+        }
+
+        await appointmentModel.findByIdAndUpdate(appointmentId, { paymentMethod: "cash" })
+
+        res.json({ success: true, message: 'Cash payment selected' })
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
 }
 
 // API: Change user email
@@ -798,10 +777,9 @@ export {
     bookAppointment,
     listAppointment,
     cancelAppointment,
-    paymentRazorpay,
-    verifyRazorpay,
     paymentStripe,
     verifyStripe,
+    paymentCash,
     getProfileDashboard,
     uploadReport,
     changeEmail,

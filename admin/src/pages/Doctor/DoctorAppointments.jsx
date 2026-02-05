@@ -50,6 +50,16 @@ const DoctorAppointments = () => {
           {appointments.map((item, index) => {
             const ageValue = calculateAge(item.userData.dob)
             const age = Number.isNaN(ageValue) ? '-' : ageValue
+            const paymentLabel = item.payment
+              ? 'Online'
+              : item.paymentMethod === 'cash'
+                ? 'Cash'
+                : 'Unpaid'
+            const paymentClass = item.payment
+              ? 'border-emerald-200 text-emerald-600 bg-emerald-50'
+              : item.paymentMethod === 'cash'
+                ? 'border-amber-200 text-amber-600 bg-amber-50'
+                : 'border-slate-200 text-slate-500 bg-slate-50'
             return (
               <div key={item._id || index} className='border-b border-slate-200/60 dark:border-slate-800/60 px-3 sm:px-6 py-4'>
                 <div className='md:hidden grid gap-3'>
@@ -59,8 +69,8 @@ const DoctorAppointments = () => {
                       <p className='text-sm font-semibold text-slate-900 dark:text-white truncate'>{item.userData.name}</p>
                       <p className='text-xs text-slate-400 truncate'>{item.userData.email || 'Patient'}</p>
                       <div className='mt-2'>
-                        <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${item.payment ? 'border-emerald-200 text-emerald-600 bg-emerald-50' : 'border-amber-200 text-amber-600 bg-amber-50'}`}>
-                          {item.payment ? 'Online' : 'Cash'}
+                        <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${paymentClass}`}>
+                          {paymentLabel}
                         </span>
                       </div>
                     </div>
@@ -108,8 +118,8 @@ const DoctorAppointments = () => {
                     </div>
                   </div>
                   <div>
-                    <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${item.payment ? 'border-emerald-200 text-emerald-600 bg-emerald-50' : 'border-amber-200 text-amber-600 bg-amber-50'}`}>
-                      {item.payment ? 'Online' : 'Cash'}
+                    <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${paymentClass}`}>
+                      {paymentLabel}
                     </span>
                   </div>
                   <p>{age}</p>

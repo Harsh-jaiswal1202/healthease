@@ -11,6 +11,7 @@ const appointmentSchema = new mongoose.Schema({
     date: { type: Number, required: true },
     cancelled: { type: Boolean, default: false },
     payment: { type: Boolean, default: false },
+    paymentMethod: { type: String, enum: ["online", "cash", "unpaid"], default: "unpaid" },
     isCompleted: { type: Boolean, default: false }
 })
 
