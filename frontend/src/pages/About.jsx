@@ -39,7 +39,7 @@ const About = () => {
           </div>
           <div className='flex-1 w-full'>
             <div className='relative rounded-[28px] overflow-hidden border border-slate-200/60 dark:border-gray-800/60 shadow-[0_20px_60px_-35px_rgba(15,23,42,0.55)]'>
-              <img className='w-full h-full object-cover' src={assets.about_image} alt="" />
+              <img loading="lazy" className='w-full h-full object-cover' src={assets.about_image} alt="" />
               <div className='absolute inset-0 bg-gradient-to-tr from-white/60 via-transparent to-transparent dark:from-gray-900/40'></div>
             </div>
           </div>

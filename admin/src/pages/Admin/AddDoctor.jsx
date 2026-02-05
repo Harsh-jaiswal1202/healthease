@@ -256,7 +256,7 @@ const AddDoctor = () => {
             <div className='px-4 sm:px-6 lg:px-8'>
                 <div className='mb-6 flex flex-col gap-4 pt-6 sm:flex-row sm:items-center sm:justify-between'>
                     <div>
-                        <p className='text-xs uppercase tracking-[0.3em] text-slate-400'>Dashboard > Doctors > Add Doctor</p>
+                        <p className='text-xs uppercase tracking-[0.3em] text-slate-400'>Dashboard &gt; Doctors &gt; Add Doctor</p>
                         <h1 className='text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 dark:text-white'>Add New Doctor</h1>
                         <p className='text-sm text-slate-500 dark:text-slate-400 dark:text-slate-400'>Fill in doctor details to publish their profile.</p>
                     </div>

@@ -132,7 +132,7 @@ const EditDoctor = () => {
     <form onSubmit={handleSubmit} className='min-h-[calc(100vh-80px)] bg-gradient-to-br from-slate-50 via-indigo-50 to-emerald-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-4 sm:p-6 lg:p-8'>
       <div className='mb-6 flex flex-wrap items-center justify-between gap-4'>
         <div>
-          <p className='text-xs uppercase tracking-[0.3em] text-slate-400'>Doctors > Edit</p>
+          <p className='text-xs uppercase tracking-[0.3em] text-slate-400'>Doctors &gt; Edit</p>
           <h1 className='text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-white'>Edit Doctor</h1>
           <p className='text-sm text-slate-500 dark:text-slate-400'>Update profile fields and documents.</p>
         </div>

@@ -185,6 +185,7 @@ const Banner = () => {
           }}
         >
           <img 
+            loading="lazy"
             className='w-full absolute bottom-0 right-0 max-w-md drop-shadow-2xl' 
             src={assets.appointment_img} 
             alt="Appointment"

@@ -31,8 +31,13 @@ CLOUDINARY_SECRET_KEY=your_cloudinary_secret_key
 
 # Payment Gateway Configuration
 STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
-RAZORPAY_KEY_ID=rzp_test_your_razorpay_key_id
-RAZORPAY_KEY_SECRET=your_razorpay_secret_key
+# Razorpay has been removed temporarily. Use Stripe or cash for payments.
+
+# Monitoring (optional but recommended)
+SENTRY_DSN=your_sentry_dsn_here
+
+# Note: The backend exposes a simple health endpoint at `/health` which returns { ok: true, dbConnected: true } when healthy.
+
 
 # Currency Configuration
 CURRENCY=INR
@@ -50,7 +55,7 @@ ALLOWED_ORIGINS=https://your-frontend.vercel.app,https://your-admin.vercel.app
 - **JWT_SECRET**: Generate a random long string (at least 32 characters)
 - **Cloudinary**: Sign up at [Cloudinary](https://cloudinary.com/) and get credentials from dashboard
 - **Stripe**: Get API keys from [Stripe Dashboard](https://dashboard.stripe.com/apikeys)
-- **Razorpay**: Get keys from [Razorpay Dashboard](https://dashboard.razorpay.com/app/keys)
+- **Cash payments**: No gateway credentials required (handled by app)
 
 ### 2. **Frontend Environment Variables**
 Create a `.env` file in the `frontend` folder:
@@ -58,6 +63,15 @@ Create a `.env` file in the `frontend` folder:
 ```env
 VITE_BACKEND_URL=https://your-backend.vercel.app
 VITE_CURRENCY=INR
+# Optional: Sentry DSN for frontend monitoring
+VITE_SENTRY_DSN=https://your_sentry_dsn_here
+```
+
+**Asset optimization**: The frontend includes `scripts/optimize-images.js` (uses `sharp`) to create optimized `.webp` versions of large images. Run in the `frontend` folder:
+
+```bash
+npm install
+npm run optimize-images
 ```
 
 ### 3. **Admin Environment Variables**
@@ -267,4 +281,12 @@ If you encounter issues:
 2. Verify all environment variables are set correctly
 3. Test API endpoints using Postman or similar tools
 4. Check browser console for frontend errors
+
+---
+
+## 🛡️ Backups & Monitoring Recommendations
+- Use **MongoDB Atlas automated backups** (Snapshots) and test restore regularly.
+- Configure **Sentry** for frontend (`VITE_SENTRY_DSN`) and backend (`SENTRY_DSN`) to capture errors and performance traces.
+- Set up log drains and alerts in your hosting provider (Vercel) to notify on failures and high error rates.
+- Consider scheduled health checks hitting `/health` endpoint and automate alerts when down.
 

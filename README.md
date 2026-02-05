@@ -19,7 +19,8 @@ prescripto-main/
 - **npm** or **yarn**
 - **MongoDB Atlas** account (or local MongoDB)
 - **Cloudinary** account (for image uploads)
-- **Stripe** and **Razorpay** accounts (for payments - optional for development)
+- **Stripe** account (for payments - optional for development)
+- Cash payments (supported)
 
 ### Step 1: Install Dependencies
 
@@ -64,8 +65,7 @@ CLOUDINARY_SECRET_KEY=your_cloudinary_secret_key
 
 # Payment Gateway Configuration (optional for development)
 STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
-RAZORPAY_KEY_ID=rzp_test_your_razorpay_key_id
-RAZORPAY_KEY_SECRET=your_razorpay_secret_key
+# Razorpay has been removed temporarily. Use Stripe or cash for payments.
 
 # Currency Configuration
 CURRENCY=INR
@@ -82,7 +82,7 @@ ALLOWED_ORIGINS=http://localhost:5173,http://localhost:5174
 - **JWT_SECRET**: Generate a random long string (at least 32 characters)
 - **Cloudinary**: Sign up at [Cloudinary](https://cloudinary.com/) and get credentials from dashboard
 - **Stripe**: Get API keys from [Stripe Dashboard](https://dashboard.stripe.com/apikeys) (test keys for development)
-- **Razorpay**: Get keys from [Razorpay Dashboard](https://dashboard.razorpay.com/app/keys) (test keys for development)
+- **Cash payments**: No gateway credentials required
 
 #### Frontend Configuration
 
@@ -139,6 +139,17 @@ The admin panel will start on `http://localhost:5174`
 - **Admin Panel**: http://localhost:5174
 - **Backend API**: http://localhost:4000
 
+## ⚙️ Asset optimization
+- The frontend contains `scripts/optimize-images.js` to generate optimized `.webp` versions of large images using `sharp`.
+- Run in `frontend`:
+
+```bash
+npm install
+npm run optimize-images
+```
+
+This reduces bundle sizes and improves load times.
+
 ## 📝 Available Scripts
 
 ### Backend
@@ -189,7 +200,7 @@ The admin panel will start on `http://localhost:5174`
 - **Backend**: Node.js, Express, MongoDB, Mongoose
 - **Authentication**: JWT
 - **File Upload**: Cloudinary, Multer
-- **Payments**: Stripe, Razorpay
+# **Payments**: Stripe (and Cash)
 
 ## 📄 License
 

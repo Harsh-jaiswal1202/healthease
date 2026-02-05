@@ -22,14 +22,14 @@ const Navbar = () => {
   return (
     <div className='sticky top-0 z-50 flex items-center justify-between text-sm py-4 mb-0 border-b border-b-[#ADADAD] dark:border-b-gray-700 bg-white/95 dark:bg-gray-900/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 supports-[backdrop-filter]:dark:bg-gray-900/80 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16'>
       <div className='flex items-center gap-4'>
-        <img onClick={() => navigate('/')} className='w-44 cursor-pointer' src={assets.icon} alt="" />
+        <img onClick={() => navigate('/')} loading="lazy" className='w-44 cursor-pointer' src={assets.icon} alt="" />
       </div>
 
       <div className='flex items-center gap-4 '>
         {
           token && userData
             ? <div className='flex items-center gap-2 cursor-pointer group relative'>
-              <img className='w-8 rounded-full' src={userData.image} alt="" />
+              <img loading="lazy" className='w-8 rounded-full' src={userData.image} alt="" />
               <img className='w-2.5' src={assets.dropdown_icon} alt="" />
               <div className='absolute top-0 right-0 pt-14 text-base font-medium text-gray-600 dark:text-gray-300 z-20 hidden group-hover:block'>
                 <div className='min-w-48 bg-gray-50 dark:bg-gray-800 rounded flex flex-col gap-4 p-4 shadow-lg'>

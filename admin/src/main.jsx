@@ -7,6 +7,18 @@ import AdminContextProvider from './context/AdminContext.jsx'
 import DoctorContextProvider from './context/DoctorContext.jsx'
 import AppContextProvider from './context/AppContext.jsx'
 
+import * as Sentry from "@sentry/react"
+import { BrowserTracing } from "@sentry/tracing"
+
+if (import.meta.env.VITE_SENTRY_DSN) {
+  Sentry.init({
+    dsn: import.meta.env.VITE_SENTRY_DSN,
+    integrations: [new BrowserTracing()],
+    tracesSampleRate: 0.1,
+    environment: import.meta.env.MODE
+  })
+}
+
 const storedTheme = localStorage.getItem('admin-theme') || localStorage.getItem('doctor-theme')
 if (storedTheme) {
   const useDark = storedTheme === 'dark'

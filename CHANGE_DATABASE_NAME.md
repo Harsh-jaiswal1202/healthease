@@ -69,8 +69,7 @@ CLOUDINARY_SECRET_KEY=your_cloudinary_secret_key
 
 # Payment Gateway Configuration
 STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
-RAZORPAY_KEY_ID=rzp_test_your_razorpay_key_id
-RAZORPAY_KEY_SECRET=your_razorpay_secret_key
+# Razorpay has been removed temporarily. Use Stripe or cash for payments.
 
 # Currency Configuration
 CURRENCY=INR

@@ -6,10 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "optimize-images": "node scripts/optimize-images.js",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@sentry/react": "^10.38.0",
+    "@sentry/tracing": "^7.120.4",
     "axios": "^1.7.2",
     "framer-motion": "^12.23.24",
     "gsap": "^3.13.0",
@@ -28,6 +31,7 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
     "postcss": "^8.4.39",
+    "sharp": "^0.34.5",
     "tailwindcss": "^3.4.4",
     "vite": "^5.3.1"
   }
