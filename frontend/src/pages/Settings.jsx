@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 
 const Settings = () => {
-  const { userData, backendUrl, token, setToken, loadUserProfileData } = useContext(AppContext)
+  const { userData, backendUrl, token, setToken, loadUserProfileData, isDarkMode, toggleTheme } = useContext(AppContext)
   const navigate = useNavigate()
   const [email, setEmail] = useState(userData?.email || '')
   const [emailPassword, setEmailPassword] = useState('')
@@ -122,6 +122,15 @@ const Settings = () => {
         transition={{ duration: 0.5 }}
         className="max-w-5xl mx-auto"
       >
+        <div className="mb-3 sm:mb-4 md:hidden">
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-slate-200/80 dark:border-gray-700/80 bg-white/90 dark:bg-gray-900/80 text-slate-700 dark:text-gray-200 shadow-sm hover:bg-slate-50 dark:hover:bg-gray-800 transition-all"
+            aria-label="Back"
+          >
+            <span className="text-lg leading-none">←</span>
+          </button>
+        </div>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div>
             <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.24em]">
@@ -134,13 +143,58 @@ const Settings = () => {
               Update your email, password, or remove your account.
             </p>
           </div>
-          <div className="hidden md:flex items-center gap-2 text-xs text-slate-500 dark:text-gray-400">
-            <span className="inline-flex h-2 w-2 rounded-full bg-emerald-400"></span>
-            Profile status: active
+          <div className="hidden md:flex flex-col items-end gap-2">
+            <button
+              onClick={() => navigate(-1)}
+              className="inline-flex items-center justify-center rounded-full border border-slate-200/80 dark:border-gray-700/80 bg-white/90 dark:bg-gray-900/80 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-gray-200 shadow-sm hover:bg-slate-50 dark:hover:bg-gray-800 transition-all"
+            >
+              Back
+            </button>
+            <div className="items-center gap-2 text-xs text-slate-500 dark:text-gray-400 hidden lg:flex">
+              <span className="inline-flex h-2 w-2 rounded-full bg-emerald-400"></span>
+              Profile status: active
+            </div>
           </div>
         </div>
 
         <div className="grid gap-6">
+          <motion.section
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.05 }}
+            className="bg-white/90 dark:bg-gray-900/80 backdrop-blur border border-slate-200/60 dark:border-gray-800/60 rounded-3xl shadow-[0_18px_60px_-40px_rgba(15,23,42,0.5)] p-6"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.24em]">
+                  Appearance
+                </p>
+                <h2 className="text-xl font-semibold text-slate-900 dark:text-white mt-2">
+                  Theme
+                </h2>
+                <p className="text-sm text-slate-500 dark:text-gray-400 mt-1">
+                  Switch between light and dark mode.
+                </p>
+              </div>
+              <button
+                onClick={toggleTheme}
+                className="inline-flex items-center gap-2 rounded-full border border-slate-200/80 dark:border-gray-700/80 bg-white/90 dark:bg-gray-900/80 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-gray-200 shadow-sm hover:bg-slate-50 dark:hover:bg-gray-800 transition-all"
+                aria-label="Toggle theme"
+              >
+                {isDarkMode ? (
+                  <>
+                    <span className="text-yellow-500">☀</span>
+                    Light
+                  </>
+                ) : (
+                  <>
+                    <span className="text-slate-700">🌙</span>
+                    Dark
+                  </>
+                )}
+              </button>
+            </div>
+          </motion.section>
           <motion.section
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}

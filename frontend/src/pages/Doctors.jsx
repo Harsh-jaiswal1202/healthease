@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { AppContext } from '../context/AppContext'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -10,6 +10,7 @@ const Doctors = () => {
   const [selectedSpeciality, setSelectedSpeciality] = useState('All')
   const [visibleCount, setVisibleCount] = useState(6)
   const navigate = useNavigate();
+  const filterNavRef = useRef(null)
 
   const { doctors } = useContext(AppContext)
 
@@ -47,8 +48,17 @@ const Doctors = () => {
     setVisibleCount(6)
   }, [speciality, doctors])
 
+  useEffect(() => {
+    const container = filterNavRef.current
+    if (!container) return
+    const activeButton = container.querySelector('[data-active="true"]')
+    if (activeButton?.scrollIntoView) {
+      activeButton.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
+    }
+  }, [selectedSpeciality])
+
   return (
-    <div className='relative'>
+    <div className='relative px-4 sm:px-6 lg:px-10 py-8'>
       <div className='rounded-3xl border border-slate-200/70 dark:border-gray-800/70 bg-white/90 dark:bg-gray-900/80 p-4 sm:p-6 shadow-[0_20px_50px_-30px_rgba(15,23,42,0.45)]'>
         <div className='flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between'>
           <div>
@@ -72,7 +82,7 @@ const Doctors = () => {
           </div>
         </div>
 
-        <div className='mt-5 flex items-center gap-2 overflow-x-auto pb-2 -mx-2 px-2'>
+        <div ref={filterNavRef} className='mt-5 flex items-center gap-2 overflow-x-auto pb-2 -mx-2 px-2 scroll-smooth'>
           {specialities.map((item) => (
             <button
               key={item}
@@ -85,6 +95,7 @@ const Doctors = () => {
                   navigate(`/doctors/${item}`)
                 }
               }}
+              data-active={selectedSpeciality === item}
               className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-all border ${
                 selectedSpeciality === item
                   ? 'bg-gradient-to-r from-primary to-cyan-500 text-white border-transparent shadow-[0_10px_30px_-20px_rgba(59,130,246,0.8)]'
@@ -105,7 +116,7 @@ const Doctors = () => {
           >
             <div className='flex flex-col gap-4 sm:gap-6 md:flex-row md:items-center'>
               <div className='relative flex-shrink-0 self-center md:self-auto'>
-                <img className='h-24 w-24 sm:h-28 sm:w-28 rounded-3xl object-cover ring-4 ring-white shadow-md' src={item.image} alt={item.name} />
+                <img className='h-20 w-20 sm:h-28 sm:w-28 rounded-3xl object-cover ring-4 ring-white shadow-md' src={item.image} alt={item.name} />
                 <div className={`absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-semibold ${
                   item.available ? 'bg-emerald-500 text-white' : 'bg-slate-400 text-white'
                 }`}>
@@ -113,7 +124,7 @@ const Doctors = () => {
                 </div>
               </div>
 
-              <div className='flex-1'>
+              <div className='flex-1 text-center sm:text-left'>
                 <div className='flex flex-col sm:flex-row sm:items-center sm:gap-3'>
                   <h3 className='text-xl font-semibold text-slate-900 dark:text-white'>{item.name}</h3>
                   <span className='text-sm font-medium text-primary'>{item.speciality}</span>
@@ -125,11 +136,11 @@ const Doctors = () => {
                 </div>
 
                 <div className='mt-3 flex flex-wrap items-center gap-2'>
-                  <span className='px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700'>✔ Verified</span>
+                  <span className='px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700'>Verified</span>
                   <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                     item.available ? 'bg-blue-50 text-blue-700' : 'bg-slate-100 text-slate-600'
                   }`}>
-                    {item.available ? '🕒 Available Today' : 'Not Available'}
+                    {item.available ? 'Available Today' : 'Not Available'}
                   </span>
                 </div>
               </div>

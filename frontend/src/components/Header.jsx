@@ -48,7 +48,7 @@ const Header = () => {
   return (
     <div 
       ref={headerRef}
-      className='relative flex flex-col md:flex-row flex-wrap bg-gradient-to-br from-primary via-primary to-purple-600 overflow-visible shadow-2xl mt-0 mb-10 rounded-none'
+      className='relative flex flex-col md:flex-row flex-wrap bg-gradient-to-br from-primary via-primary to-purple-600 overflow-visible shadow-2xl mt-0 mb-0 rounded-none'
     >
       {/* Animated Background */}
       <div className="absolute inset-0">
@@ -112,10 +112,10 @@ const Header = () => {
       </div>
 
       {/* Header Left */}
-      <div className='relative z-10 md:w-1/2 flex flex-col items-start justify-center gap-6 py-12 px-6 md:px-10 lg:px-20 m-auto md:py-[10vw] md:mb-[-30px]'>
+      <div className='relative z-10 md:w-1/2 flex flex-col items-center md:items-start justify-center gap-5 sm:gap-6 py-10 sm:py-12 px-6 md:px-10 lg:px-20 m-auto md:py-[10vw] md:mb-[-30px] text-center md:text-left'>
         <div ref={textRef}>
           <motion.h1 
-            className='text-4xl md:text-5xl lg:text-6xl text-white font-extrabold leading-tight md:leading-tight lg:leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)]'
+            className='text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white font-extrabold leading-tight md:leading-tight lg:leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] max-w-md md:max-w-none'
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -128,13 +128,13 @@ const Header = () => {
         </div>
         
           <motion.div 
-          className='flex flex-col md:flex-row items-center gap-4 text-white/95 text-sm font-light drop-shadow-[0_3px_10px_rgba(0,0,0,0.6)]'
+          className='flex flex-col md:flex-row items-center gap-4 text-white/95 text-sm font-light drop-shadow-[0_3px_10px_rgba(0,0,0,0.6)] max-w-md md:max-w-none'
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.6 }}
         >
           <motion.img 
-            className='w-32 drop-shadow-lg' 
+            className='w-24 sm:w-32 drop-shadow-lg' 
             src={assets.group_profiles} 
             alt=""
             whileHover={{ scale: 1.1, rotate: 5 }}
@@ -149,7 +149,7 @@ const Header = () => {
         <motion.a 
           ref={buttonRef}
           href='#speciality' 
-          className='group relative flex items-center gap-3 bg-white px-8 py-4 rounded-full text-[#595959] text-sm font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden z-20'
+          className='group relative flex items-center justify-center gap-3 bg-white px-8 py-4 rounded-full text-[#595959] text-sm font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden z-20 w-full sm:w-auto'
           style={{ opacity: 1, visibility: 'visible', display: 'flex' }}
           whileHover={{ scale: 1.05, y: -2 }}
           whileTap={{ scale: 0.95 }}
@@ -169,10 +169,11 @@ const Header = () => {
             className="absolute inset-0 bg-gradient-to-r from-primary/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
           />
         </motion.a>
+
       </div>
 
       {/* Header Right - Animated Doctors Image */}
-      <div className='relative z-10 md:w-1/2 flex items-center justify-center min-h-[400px] md:min-h-[500px] overflow-visible'>
+      <div className='relative z-10 hidden sm:flex md:w-1/2 items-center justify-center min-h-[320px] sm:min-h-[380px] md:min-h-[500px] overflow-visible'>
         <motion.div
           ref={imageRef}
           className="relative w-full h-full overflow-visible"

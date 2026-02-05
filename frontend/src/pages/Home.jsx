@@ -19,7 +19,7 @@ const Home = () => {
     // Set up smooth scroll animations + parallax
     const ctx = gsap.context(() => {
       // Animate sections on scroll
-      gsap.utils.toArray('.section-animate').forEach((section, index) => {
+      gsap.utils.toArray('.section-animate').forEach((section) => {
         gsap.from(section, {
           opacity: 0,
           y: 50,
@@ -29,25 +29,12 @@ const Home = () => {
             trigger: section,
             start: 'top 85%',
             end: 'bottom 60%',
-            scrub: 0.6
+            scrub: 0.2
           }
         })
       })
 
-      // Parallax layers
-      gsap.utils.toArray('.parallax-layer').forEach((layer) => {
-        const speed = Number(layer.getAttribute('data-parallax')) || 0.15
-        gsap.to(layer, {
-          y: () => -window.innerHeight * speed,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: true
-          }
-        })
-      })
+      // Parallax layers disabled for smoother scroll
     }, containerRef)
 
     return () => ctx.revert()

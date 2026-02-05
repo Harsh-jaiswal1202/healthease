@@ -131,22 +131,23 @@ const Appointment = () => {
     }, [docInfo])
 
     return docInfo ? (
-        <div className="relative min-h-screen bg-slate-50/80 dark:bg-gray-950 px-4 sm:px-6 lg:px-10 py-10">
+        <div className="relative min-h-screen bg-slate-50/80 dark:bg-gray-950 px-4 sm:px-6 lg:px-10 pt-16 sm:pt-10 pb-8 sm:py-10">
             <button
                 onClick={() => navigate('/doctors')}
-                className="absolute left-4 sm:left-6 lg:left-10 top-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 backdrop-blur border border-slate-200/70 text-slate-700 text-sm font-semibold shadow-[0_10px_30px_-20px_rgba(15,23,42,0.35)] hover:-translate-y-0.5 hover:shadow-[0_16px_40px_-24px_rgba(15,23,42,0.45)] transition z-20"
+                className="absolute left-4 sm:left-6 lg:left-10 top-4 sm:top-6 inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-white/90 backdrop-blur border border-slate-200/70 text-slate-700 text-sm font-semibold shadow-[0_10px_30px_-20px_rgba(15,23,42,0.35)] hover:-translate-y-0.5 hover:shadow-[0_16px_40px_-24px_rgba(15,23,42,0.45)] transition z-20"
             >
-                Back
+                <span className="sm:hidden text-lg leading-none">←</span>
+                <span className="hidden sm:inline">Back</span>
             </button>
             <div className="max-w-6xl mx-auto space-y-8">
                 {/* ---------- Doctor Details ----------- */}
-                <div className="relative overflow-hidden bg-white/90 backdrop-blur border border-slate-200/60 dark:border-gray-800/60 shadow-[0_18px_60px_-32px_rgba(15,23,42,0.5)] rounded-[28px] p-6">
+                <div className="relative overflow-hidden bg-white/90 backdrop-blur border border-slate-200/60 dark:border-gray-800/60 shadow-[0_18px_60px_-32px_rgba(15,23,42,0.5)] rounded-[28px] p-4 sm:p-6">
                     <div className="pointer-events-none absolute -top-24 -right-20 h-56 w-56 rounded-full bg-gradient-to-br from-primary/10 via-cyan-500/10 to-transparent blur-3xl"></div>
                     <div className="pointer-events-none absolute -bottom-24 -left-16 h-48 w-48 rounded-full bg-gradient-to-br from-emerald-400/10 via-sky-400/10 to-transparent blur-3xl"></div>
 
-                    <div className="relative flex flex-col lg:flex-row gap-6">
-                        <div className="bg-slate-50 rounded-2xl p-2 ring-1 ring-slate-200/70 shadow-[0_10px_30px_-20px_rgba(15,23,42,0.4)]">
-                            <img className="w-full max-w-72 rounded-2xl object-cover" src={docInfo.image} alt="" />
+                    <div className="relative flex flex-col lg:flex-row gap-4 sm:gap-6">
+                        <div className="bg-slate-50 rounded-2xl p-2 ring-1 ring-slate-200/70 shadow-[0_10px_30px_-20px_rgba(15,23,42,0.4)] self-center lg:self-auto">
+                            <img className="w-full max-w-64 sm:max-w-72 rounded-2xl object-cover" src={docInfo.image} alt="" />
                         </div>
 
                         <div className="flex-1">
@@ -182,7 +183,7 @@ const Appointment = () => {
                 </div>
 
                 {/* Booking slots */}
-                <div className="relative overflow-hidden bg-white/90 backdrop-blur border border-slate-200/60 dark:border-gray-800/60 shadow-[0_18px_60px_-32px_rgba(15,23,42,0.5)] rounded-[28px] p-6">
+                <div className="relative overflow-hidden bg-white/90 backdrop-blur border border-slate-200/60 dark:border-gray-800/60 shadow-[0_18px_60px_-32px_rgba(15,23,42,0.5)] rounded-[28px] p-4 sm:p-6">
                     <div className="pointer-events-none absolute -top-24 -right-20 h-56 w-56 rounded-full bg-gradient-to-br from-primary/10 via-cyan-500/10 to-transparent blur-3xl"></div>
                     <div className="pointer-events-none absolute -bottom-24 -left-16 h-48 w-48 rounded-full bg-gradient-to-br from-emerald-400/10 via-sky-400/10 to-transparent blur-3xl"></div>
 
@@ -195,7 +196,7 @@ const Appointment = () => {
                                 <button
                                     onClick={() => setSlotIndex(index)}
                                     key={index}
-                                    className={`min-w-16 rounded-2xl px-4 py-3 text-center text-sm font-semibold transition-all ${slotIndex === index ? 'bg-gradient-to-r from-primary to-cyan-500 text-white shadow-[0_10px_30px_-20px_rgba(59,130,246,0.8)]' : 'border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+                                    className={`min-w-16 rounded-2xl px-3 sm:px-4 py-3 text-center text-sm font-semibold transition-all ${slotIndex === index ? 'bg-gradient-to-r from-primary to-cyan-500 text-white shadow-[0_10px_30px_-20px_rgba(59,130,246,0.8)]' : 'border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
                                 >
                                     <p>{item[0] && daysOfWeek[item[0].datetime.getDay()]}</p>
                                     <p>{item[0] && item[0].datetime.getDate()}</p>
@@ -208,7 +209,7 @@ const Appointment = () => {
                                 <button
                                     onClick={() => setSlotTime(item.time)}
                                     key={index}
-                                    className={`text-sm font-medium flex-shrink-0 px-5 py-2 rounded-full transition-all ${item.time === slotTime ? 'bg-gradient-to-r from-primary to-cyan-500 text-white shadow-[0_10px_30px_-20px_rgba(59,130,246,0.8)]' : 'text-slate-500 border border-slate-200 hover:bg-slate-50'}`}
+                                    className={`text-sm font-medium flex-shrink-0 px-4 sm:px-5 py-2 rounded-full transition-all ${item.time === slotTime ? 'bg-gradient-to-r from-primary to-cyan-500 text-white shadow-[0_10px_30px_-20px_rgba(59,130,246,0.8)]' : 'text-slate-500 border border-slate-200 hover:bg-slate-50'}`}
                                 >
                                     {item.time.toLowerCase()}
                                 </button>

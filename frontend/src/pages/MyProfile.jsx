@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { AppContext } from '../context/AppContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
@@ -11,6 +11,7 @@ const MyProfile = () => {
     const [activeNav, setActiveNav] = useState('overview')
     const [isBloodGroupOpen, setIsBloodGroupOpen] = useState(false)
     const [isGenderOpen, setIsGenderOpen] = useState(false)
+    const mobileNavRef = useRef(null)
 
     const { token, backendUrl, userData, setUserData, loadUserProfileData, profileDashboard } = useContext(AppContext)
     const navigate = useNavigate()
@@ -20,6 +21,26 @@ const MyProfile = () => {
     const doctorHistory = profileDashboard?.doctorHistory || []
     const reports = profileDashboard?.reports || []
     const payments = profileDashboard?.payments || []
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+    const formatProfileDate = (value) => {
+        if (!value) return ''
+        if (typeof value === 'string') {
+            if (value.includes('_')) {
+                const [day, month, year] = value.split('_')
+                const monthLabel = months[Number(month) - 1] || month
+                return `${day} ${monthLabel} ${year}`
+            }
+            const parsed = new Date(value)
+            if (!Number.isNaN(parsed.getTime())) {
+                return parsed.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })
+            }
+        }
+        if (value instanceof Date) {
+            return value.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })
+        }
+        return String(value)
+    }
 
     // Function to update user profile data using API
     const updateUserProfileData = async () => {
@@ -94,6 +115,15 @@ const MyProfile = () => {
         setEditSection(null)
     }
 
+    useEffect(() => {
+        const container = mobileNavRef.current
+        if (!container) return
+        const activeButton = container.querySelector('[data-active="true"]')
+        if (activeButton?.scrollIntoView) {
+            activeButton.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
+        }
+    }, [activeNav])
+
     const isEditing = (section) => editSection === section
 
     const handleCancelAppointment = async (appointmentId) => {
@@ -148,7 +178,7 @@ const MyProfile = () => {
     if (!userData) return null
 
     return (
-        <div className="min-h-screen bg-slate-50/80 dark:bg-gray-950 pt-6 pb-12 px-4 sm:px-6 lg:px-10 flex gap-6">
+        <div className="min-h-screen bg-slate-50/80 dark:bg-gray-950 pt-4 sm:pt-6 pb-10 sm:pb-12 px-4 sm:px-6 lg:px-10 flex flex-col lg:flex-row gap-4 sm:gap-6">
             {/* Sidebar navigation */}
             <aside className="hidden lg:flex flex-col w-64 bg-white/90 dark:bg-gray-900/80 backdrop-blur border border-slate-200/60 dark:border-gray-800/60 shadow-[0_20px_60px_-40px_rgba(15,23,42,0.45)] rounded-3xl py-5">
                 <div className="px-6 pb-4 border-b border-slate-200/60 dark:border-gray-800/60">
@@ -259,7 +289,7 @@ const MyProfile = () => {
             <div className="flex-1">
                 <div
                     id="overview"
-                    className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 bg-white/80 dark:bg-gray-900/80 backdrop-blur border border-slate-200/60 dark:border-gray-800/60 rounded-3xl p-5 shadow-[0_12px_40px_-30px_rgba(15,23,42,0.45)]"
+                    className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 sm:mb-6 bg-white/80 dark:bg-gray-900/80 backdrop-blur border border-slate-200/60 dark:border-gray-800/60 rounded-3xl p-4 sm:p-5 shadow-[0_12px_40px_-30px_rgba(15,23,42,0.45)]"
                 >
                     <div>
                         <h2 className="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-white">
@@ -272,24 +302,64 @@ const MyProfile = () => {
                     {activeNav === 'overview' && (
                         <button
                             onClick={() => setEditSection(prev => prev === 'overview' ? null : 'overview')}
-                            className="px-5 py-2.5 rounded-full bg-gradient-to-r from-primary to-cyan-500 text-white text-sm font-semibold shadow-[0_10px_30px_-20px_rgba(59,130,246,0.8)] hover:opacity-95 transition-all"
+                            className="w-full sm:w-auto px-5 py-2.5 rounded-full bg-gradient-to-r from-primary to-cyan-500 text-white text-sm font-semibold shadow-[0_10px_30px_-20px_rgba(59,130,246,0.8)] hover:opacity-95 transition-all"
                         >
                             {isEditing('overview') ? 'Cancel' : 'Edit Overview'}
                         </button>
                     )}
                 </div>
 
+                <div className="lg:hidden mb-6">
+                    <div ref={mobileNavRef} className="flex gap-2 overflow-x-auto pb-1 scroll-smooth">
+                        <button
+                            onClick={() => {
+                                setActiveNav('dashboard')
+                                navigate('/')
+                            }}
+                            data-active={activeNav === 'dashboard'}
+                            className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium border transition ${activeNav === 'dashboard'
+                                ? 'bg-primary text-white border-primary shadow-[0_10px_30px_-20px_rgba(79,70,229,0.8)]'
+                                : 'bg-white/90 dark:bg-gray-900/80 border-slate-200/70 dark:border-gray-800/70 text-slate-600 dark:text-gray-300'
+                                }`}
+                        >
+                            Dashboard
+                        </button>
+                        {[
+                            { id: 'overview', label: 'Overview' },
+                            { id: 'basic-info', label: 'Basic Info' },
+                            { id: 'medical-info', label: 'Medical' },
+                            { id: 'stats', label: 'Stats' },
+                            { id: 'appointments', label: 'Appointments' },
+                            { id: 'doctor-history', label: 'Doctors' },
+                            { id: 'reports-payments', label: 'Reports' },
+                            { id: 'preferences', label: 'Notifications' }
+                        ].map(item => (
+                            <button
+                                key={item.id}
+                                onClick={() => openSection(item.id)}
+                                data-active={activeNav === item.id}
+                                className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium border transition ${activeNav === item.id
+                                    ? 'bg-primary/10 text-primary border-primary/30'
+                                    : 'bg-white/90 dark:bg-gray-900/80 border-slate-200/70 dark:border-gray-800/70 text-slate-600 dark:text-gray-300'
+                                    }`}
+                            >
+                                {item.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
                 <div className="grid gap-6">
                 {/* Left column: profile card + completion */}
-                <div className={`relative overflow-hidden bg-white/90 backdrop-blur border border-slate-200/60 shadow-[0_18px_60px_-32px_rgba(15,23,42,0.5)] rounded-[28px] dark:bg-gray-900/80 dark:border-gray-800/60 p-6 flex flex-col gap-6 ${activeNav !== 'overview' ? 'hidden' : ''}`}>
+                <div className={`relative overflow-hidden bg-white/90 backdrop-blur border border-slate-200/60 shadow-[0_18px_60px_-32px_rgba(15,23,42,0.5)] rounded-[28px] dark:bg-gray-900/80 dark:border-gray-800/60 p-4 sm:p-6 flex flex-col gap-6 ${activeNav !== 'overview' ? 'hidden' : ''}`}>
                     <div className="pointer-events-none absolute -top-24 -right-24 h-56 w-56 rounded-full bg-gradient-to-br from-primary/10 via-cyan-500/10 to-transparent blur-3xl"></div>
                     <div className="pointer-events-none absolute -bottom-24 -left-24 h-52 w-52 rounded-full bg-gradient-to-br from-emerald-400/10 via-sky-400/10 to-transparent blur-3xl"></div>
 
-                    <div className="relative flex items-center gap-4">
+                    <div className="relative flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
                         {isEditing('overview') ? (
                             <label htmlFor='image' className="cursor-pointer relative">
                                 <img
-                                    className='w-24 h-24 rounded-2xl object-cover opacity-90 ring-2 ring-white shadow-[0_12px_30px_-18px_rgba(15,23,42,0.45)]'
+                                    className='w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover opacity-90 ring-2 ring-white shadow-[0_12px_30px_-18px_rgba(15,23,42,0.45)]'
                                     src={image ? URL.createObjectURL(image) : userData.image}
                                     alt=""
                                 />
@@ -297,7 +367,7 @@ const MyProfile = () => {
                                 <input onChange={(e) => setImage(e.target.files[0])} type="file" id="image" hidden />
                             </label>
                         ) : (
-                            <img className='w-24 h-24 rounded-2xl object-cover ring-2 ring-white shadow-[0_12px_30px_-18px_rgba(15,23,42,0.45)]' src={userData.image} alt="" />
+                            <img className='w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover ring-2 ring-white shadow-[0_12px_30px_-18px_rgba(15,23,42,0.45)]' src={userData.image} alt="" />
                         )}
                         <div className="flex-1">
                             {isEditing('overview') ? (
@@ -334,15 +404,15 @@ const MyProfile = () => {
                     </div>
 
                     <div className="relative grid gap-3 text-sm">
-                        <div className="flex items-center justify-between rounded-2xl border border-slate-200/60 dark:border-gray-800/60 bg-white/70 dark:bg-gray-900/60 px-4 py-3 shadow-[0_10px_30px_-22px_rgba(15,23,42,0.45)]">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 rounded-2xl border border-slate-200/60 dark:border-gray-800/60 bg-white/70 dark:bg-gray-900/60 px-4 py-3 shadow-[0_10px_30px_-22px_rgba(15,23,42,0.45)]">
                             <span className="text-slate-500">Email</span>
                             <span className="text-primary font-medium">{userData.email}</span>
                         </div>
-                        <div className="flex items-center justify-between rounded-2xl border border-slate-200/60 dark:border-gray-800/60 bg-white/70 dark:bg-gray-900/60 px-4 py-3 shadow-[0_10px_30px_-22px_rgba(15,23,42,0.45)]">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 rounded-2xl border border-slate-200/60 dark:border-gray-800/60 bg-white/70 dark:bg-gray-900/60 px-4 py-3 shadow-[0_10px_30px_-22px_rgba(15,23,42,0.45)]">
                             <span className="text-slate-500">Phone</span>
                             {isEditing('overview') ? (
                                 <input
-                                    className="w-40 text-right rounded-2xl border border-slate-200/70 dark:border-gray-700/70 bg-white/80 dark:bg-gray-900/80 px-3 py-2 text-sm text-slate-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
+                                    className="w-full sm:w-40 sm:text-right rounded-2xl border border-slate-200/70 dark:border-gray-700/70 bg-white/80 dark:bg-gray-900/80 px-3 py-2 text-sm text-slate-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
                                     type="text"
                                     onChange={(e) => setUserData(prev => ({ ...prev, phone: e.target.value }))}
                                     value={userData.phone}
@@ -750,7 +820,7 @@ const MyProfile = () => {
                     </div>
 
                     {/* Appointment Management */}
-                    <div id="appointments" className={`relative overflow-hidden bg-white/90 backdrop-blur border border-slate-200/60 shadow-[0_18px_60px_-32px_rgba(15,23,42,0.5)] rounded-[28px] dark:bg-gray-900/80 dark:border-gray-800/60 p-6 ${activeNav !== 'appointments' ? 'hidden' : ''}`}>
+                    <div id="appointments" className={`relative overflow-hidden bg-white/90 backdrop-blur border border-slate-200/60 shadow-[0_18px_60px_-32px_rgba(15,23,42,0.5)] rounded-[28px] dark:bg-gray-900/80 dark:border-gray-800/60 p-4 sm:p-6 ${activeNav !== 'appointments' ? 'hidden' : ''}`}>
                         <div className="absolute -top-24 -right-20 h-52 w-52 rounded-full bg-gradient-to-br from-primary/10 via-cyan-500/10 to-transparent blur-3xl"></div>
                         <div className="relative flex items-center justify-between mb-4">
                             <div className="flex items-center gap-3">
@@ -765,7 +835,45 @@ const MyProfile = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="relative mt-3 overflow-x-auto">
+                        <div className="relative mt-3 md:hidden space-y-3">
+                            {appointments.slice(0, 5).map(app => (
+                                <div key={app._id} className="rounded-2xl border border-slate-200/70 dark:border-gray-800/70 bg-white/70 dark:bg-gray-900/60 p-4 shadow-[0_10px_30px_-22px_rgba(15,23,42,0.45)]">
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div>
+                                            <p className="text-sm font-semibold text-slate-900">{app.docData?.name}</p>
+                                            <p className="text-xs text-slate-500">{app.docData?.speciality}</p>
+                                        </div>
+                                        <div>{getStatusBadge(app)}</div>
+                                    </div>
+                                    <div className="mt-3 text-xs text-slate-500 space-y-1">
+                                        <p><span className="font-semibold text-slate-700">Date:</span> {formatProfileDate(app.slotDate)}</p>
+                                        <p><span className="font-semibold text-slate-700">Time:</span> {app.slotTime}</p>
+                                    </div>
+                                    <div className="mt-3 flex flex-wrap gap-3 text-xs">
+                                        <button
+                                            className="text-primary font-medium hover:opacity-80 transition"
+                                            onClick={() => navigate(`/appointment/${app.docId}`)}
+                                        >
+                                            Reschedule
+                                        </button>
+                                        {!app.cancelled && !app.isCompleted && (
+                                            <button
+                                                className="text-rose-500 font-medium hover:opacity-80 transition"
+                                                onClick={() => handleCancelAppointment(app._id)}
+                                            >
+                                                Cancel
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                            {!appointments.length && (
+                                <div className="rounded-2xl border border-slate-200/70 dark:border-gray-800/70 bg-white/70 dark:bg-gray-900/60 p-4 text-center text-sm text-slate-400">
+                                    No appointments yet.
+                                </div>
+                            )}
+                        </div>
+                        <div className="relative mt-3 overflow-x-auto hidden md:block">
                             <div className="min-w-full rounded-2xl border border-slate-200/70 dark:border-gray-800/70 overflow-hidden">
                                 <table className="min-w-full text-left text-sm">
                                     <thead className="text-[11px] uppercase tracking-[0.2em] text-slate-400 border-b bg-slate-50/80 dark:bg-gray-900/60">
@@ -783,7 +891,7 @@ const MyProfile = () => {
                                             <tr key={app._id} className="border-b last:border-0 hover:bg-slate-50/60 dark:hover:bg-gray-800/50 transition">
                                                 <td className="py-3 px-4 text-gray-800">{app.docData?.name}</td>
                                                 <td className="py-3 px-4 text-slate-500">{app.docData?.speciality}</td>
-                                                <td className="py-3 px-4 text-slate-500">{app.slotDate}</td>
+                                                <td className="py-3 px-4 text-slate-500">{formatProfileDate(app.slotDate)}</td>
                                                 <td className="py-3 px-4 text-slate-500">{app.slotTime}</td>
                                                 <td className="py-3 px-4">{getStatusBadge(app)}</td>
                                                 <td className="py-3 px-4 text-right space-x-2">
@@ -848,7 +956,7 @@ const MyProfile = () => {
                                         </div>
                                         <div className="text-right">
                                             <p className="text-[11px] text-slate-400 uppercase tracking-[0.2em]">Last visit</p>
-                                            <p className="text-xs text-slate-700">{doc.lastVisit}</p>
+                                            <p className="text-xs text-slate-700">{formatProfileDate(doc.lastVisit)}</p>
                                             <button
                                                 className="mt-1 text-xs text-primary font-medium hover:opacity-80 transition"
                                                 onClick={() => navigate(`/appointment/${doc.docId}`)}
