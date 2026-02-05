@@ -6,9 +6,53 @@ import validator from "validator";
 import { OAuth2Client } from "google-auth-library";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
+import { v2 as cloudinary } from "cloudinary";
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 const otpExpiryMs = 10 * 60 * 1000
+
+const formatDateKey = (dateObj) => {
+    const year = dateObj.getFullYear()
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0')
+    const day = String(dateObj.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+}
+
+const slotDateToKey = (slotDate) => {
+    if (!slotDate) return null
+    const [day, month, year] = String(slotDate).split('_')
+    if (!day || !month || !year) return null
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+}
+
+const buildLastDays = (count) => {
+    const today = new Date()
+    const days = []
+    for (let i = count - 1; i >= 0; i--) {
+        const d = new Date(today)
+        d.setDate(today.getDate() - i)
+        days.push({
+            key: formatDateKey(d),
+            label: d.toLocaleDateString('en-US', { weekday: 'short' })
+        })
+    }
+    return days
+}
+
+const parseJson = (value, fallback) => {
+    if (!value) return fallback
+    try {
+        return JSON.parse(value)
+    } catch (err) {
+        return fallback
+    }
+}
+
+const uploadToCloudinary = async (file, resourceType) => {
+    if (!file) return ""
+    const uploadResult = await cloudinary.uploader.upload(file.path, { resource_type: resourceType })
+    return uploadResult.secure_url
+}
 
 const generateOtp = () => {
     return Math.floor(100000 + Math.random() * 900000).toString()
@@ -332,12 +376,180 @@ const doctorProfile = async (req, res) => {
 const updateDoctorProfile = async (req, res) => {
     try {
 
-        const { docId, fees, address, available } = req.body
+        const { docId } = req.body
+        const doctor = await doctorModel.findById(docId)
+        if (!doctor) {
+            return res.json({ success: false, message: "Doctor not found" })
+        }
 
-        await doctorModel.findByIdAndUpdate(docId, { fees, address, available })
+        const {
+            name,
+            email,
+            password,
+            speciality,
+            degree,
+            experience,
+            about,
+            fees,
+            address,
+            location,
+            availability,
+            languages,
+            services,
+            available
+        } = req.body
 
-        res.json({ success: true, message: 'Profile Updated' })
+        const imageFile = req.files?.image?.[0]
+        const licenseFile = req.files?.license?.[0]
+        const degreeFile = req.files?.degreeCert?.[0]
+        const idFile = req.files?.idProof?.[0]
+        const certFiles = req.files?.certifications || []
 
+        const addressData = parseJson(address, doctor.address)
+        const locationData = parseJson(location, doctor.location)
+        const availabilityData = parseJson(availability, doctor.availability)
+        const languagesData = parseJson(languages, doctor.languages || [])
+        const servicesData = parseJson(services, doctor.services || [])
+
+        if (email && !validator.isEmail(email)) {
+            return res.json({ success: false, message: "Please enter a valid email" })
+        }
+
+        let hashedPassword = doctor.password
+        if (password) {
+            if (password.length < 8) {
+                return res.json({ success: false, message: "Please enter a strong password" })
+            }
+            const salt = await bcrypt.genSalt(10)
+            hashedPassword = await bcrypt.hash(password, salt)
+        }
+
+        const imageUrl = imageFile ? await uploadToCloudinary(imageFile, "image") : doctor.image
+        const licenseUrl = licenseFile ? await uploadToCloudinary(licenseFile, "raw") : doctor.documents?.licenseUrl
+        const degreeUrl = degreeFile ? await uploadToCloudinary(degreeFile, "raw") : doctor.documents?.degreeUrl
+        const idUrl = idFile ? await uploadToCloudinary(idFile, "raw") : doctor.documents?.idUrl
+        const certifications = [...(doctor.documents?.certifications || [])]
+
+        for (const file of certFiles) {
+            const certUrl = await uploadToCloudinary(file, "raw")
+            if (certUrl) certifications.push(certUrl)
+        }
+
+        const completionFields = [
+            name || doctor.name,
+            email || doctor.email,
+            speciality || doctor.speciality,
+            degree || doctor.degree,
+            experience || doctor.experience,
+            about || doctor.about,
+            fees || doctor.fees,
+            addressData?.line1,
+            addressData?.line2,
+            addressData?.city,
+            addressData?.state,
+            addressData?.pincode,
+            addressData?.clinicName,
+            locationData?.lat,
+            locationData?.lng,
+            availabilityData?.days?.length ? "yes" : "",
+            languagesData?.length ? "yes" : "",
+            servicesData?.length ? "yes" : ""
+        ]
+        const completionScore = Math.round((completionFields.filter(Boolean).length / completionFields.length) * 100)
+
+        doctor.name = name || doctor.name
+        doctor.email = email || doctor.email
+        doctor.password = hashedPassword
+        doctor.image = imageUrl
+        doctor.speciality = speciality || doctor.speciality
+        doctor.degree = degree || doctor.degree
+        doctor.experience = experience || doctor.experience
+        doctor.about = about || doctor.about
+        doctor.fees = fees !== undefined ? Number(fees) : doctor.fees
+        doctor.address = addressData
+        doctor.location = locationData
+        doctor.availability = availabilityData
+        doctor.languages = languagesData
+        doctor.services = servicesData
+        doctor.available = available !== undefined ? available === 'true' || available === true : doctor.available
+        doctor.documents = {
+            licenseUrl: licenseUrl || "",
+            degreeUrl: degreeUrl || "",
+            idUrl: idUrl || "",
+            certifications
+        }
+        doctor.profileCompletion = completionScore
+
+        await doctor.save()
+
+        res.json({ success: true, message: 'Profile Updated', doctor })
+
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
+// API to change doctor email
+const changeDoctorEmail = async (req, res) => {
+    try {
+        const { newEmail, password } = req.body
+        if (!newEmail || !password) {
+            return res.json({ success: false, message: "Missing details" })
+        }
+        if (!validator.isEmail(newEmail)) {
+            return res.json({ success: false, message: "Please enter a valid email" })
+        }
+        const doctor = await doctorModel.findById(req.body.docId)
+        if (!doctor) return res.json({ success: false, message: "Doctor not found" })
+        const isMatch = await bcrypt.compare(password, doctor.password)
+        if (!isMatch) return res.json({ success: false, message: "Invalid password" })
+        doctor.email = newEmail
+        await doctor.save()
+        res.json({ success: true, message: "Email updated" })
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
+// API to change doctor password
+const changeDoctorPassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body
+        if (!currentPassword || !newPassword) {
+            return res.json({ success: false, message: "Missing details" })
+        }
+        if (newPassword.length < 8) {
+            return res.json({ success: false, message: "Please enter a strong password" })
+        }
+        const doctor = await doctorModel.findById(req.body.docId)
+        if (!doctor) return res.json({ success: false, message: "Doctor not found" })
+        const isMatch = await bcrypt.compare(currentPassword, doctor.password)
+        if (!isMatch) return res.json({ success: false, message: "Invalid password" })
+        const salt = await bcrypt.genSalt(10)
+        doctor.password = await bcrypt.hash(newPassword, salt)
+        await doctor.save()
+        res.json({ success: true, message: "Password updated" })
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
+// API to delete doctor account
+const deleteDoctorAccount = async (req, res) => {
+    try {
+        const { password } = req.body
+        if (!password) {
+            return res.json({ success: false, message: "Password required" })
+        }
+        const doctor = await doctorModel.findById(req.body.docId)
+        if (!doctor) return res.json({ success: false, message: "Doctor not found" })
+        const isMatch = await bcrypt.compare(password, doctor.password)
+        if (!isMatch) return res.json({ success: false, message: "Invalid password" })
+        await doctorModel.findByIdAndDelete(req.body.docId)
+        res.json({ success: true, message: "Doctor account deleted" })
     } catch (error) {
         console.log(error)
         res.json({ success: false, message: error.message })
@@ -368,13 +580,88 @@ const doctorDashboard = async (req, res) => {
             }
         })
 
+        const last7Days = buildLastDays(7)
+        const last7Keys = new Set(last7Days.map(day => day.key))
+        const todayKey = formatDateKey(new Date())
+
+        const dailyCounts = last7Days.reduce((acc, day) => ({ ...acc, [day.key]: 0 }), {})
+        const dailyOnlineRevenue = last7Days.reduce((acc, day) => ({ ...acc, [day.key]: 0 }), {})
+        const dailyCashRevenue = last7Days.reduce((acc, day) => ({ ...acc, [day.key]: 0 }), {})
+
+        let todayScheduled = 0
+        let todayCompleted = 0
+        let todayCancelled = 0
+        let todayRevenue = 0
+
+        const dailyPatientSets = last7Days.reduce((acc, day) => ({ ...acc, [day.key]: new Set() }), {})
+
+        appointments.forEach((item) => {
+            const key = slotDateToKey(item.slotDate)
+            if (!key) return
+            if (last7Keys.has(key)) {
+                dailyCounts[key] += 1
+                if (dailyPatientSets[key]) {
+                    dailyPatientSets[key].add(item.userId)
+                }
+                if (item.payment) {
+                    dailyOnlineRevenue[key] += item.amount
+                } else if (item.isCompleted) {
+                    dailyCashRevenue[key] += item.amount
+                }
+            }
+
+            if (key === todayKey) {
+                if (item.cancelled) {
+                    todayCancelled += 1
+                } else if (item.isCompleted) {
+                    todayCompleted += 1
+                } else {
+                    todayScheduled += 1
+                }
+
+                if (item.isCompleted || item.payment) {
+                    todayRevenue += item.amount
+                }
+            }
+        })
+
+        const performanceCounts = last7Days.map(day => dailyCounts[day.key] || 0)
+        const performanceAvg = performanceCounts.length
+            ? Math.round(performanceCounts.reduce((sum, val) => sum + val, 0) / performanceCounts.length)
+            : 0
+        const performancePatients = last7Days.map(day => dailyPatientSets[day.key]?.size || 0)
+        const patientsPerDay = performancePatients.length
+            ? Math.round(performancePatients.reduce((sum, val) => sum + val, 0) / performancePatients.length)
+            : 0
+
+        const revenueOnline = last7Days.map(day => dailyOnlineRevenue[day.key] || 0)
+        const revenueCash = last7Days.map(day => dailyCashRevenue[day.key] || 0)
+
 
 
         const dashData = {
             earnings,
             appointments: appointments.length,
             patients: patients.length,
-            latestAppointments: appointments.reverse()
+            latestAppointments: appointments.reverse(),
+            charts: {
+                labels: last7Days.map(day => day.label),
+                appointmentSummary: {
+                    scheduled: todayScheduled,
+                    completed: todayCompleted,
+                    cancelled: todayCancelled
+                },
+                performance: {
+                    counts: performanceCounts,
+                    avgPerDay: performanceAvg,
+                    patientsPerDay
+                },
+                revenue: {
+                    online: revenueOnline,
+                    cash: revenueCash,
+                    totalToday: todayRevenue
+                }
+            }
         }
 
         res.json({ success: true, dashData })
@@ -398,5 +685,8 @@ export {
     appointmentComplete,
     doctorDashboard,
     doctorProfile,
-    updateDoctorProfile
+    updateDoctorProfile,
+    changeDoctorEmail,
+    changeDoctorPassword,
+    deleteDoctorAccount
 }

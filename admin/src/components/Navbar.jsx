@@ -4,7 +4,7 @@ import { DoctorContext } from '../context/DoctorContext'
 import { AdminContext } from '../context/AdminContext'
 import { useNavigate } from 'react-router-dom'
 
-const Navbar = () => {
+const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
 
   const { dToken } = useContext(DoctorContext)
   const { aToken } = useContext(AdminContext)
@@ -13,14 +13,16 @@ const Navbar = () => {
   const [isDark, setIsDark] = useState(false)
 
   useEffect(() => {
-    const stored = localStorage.getItem('admin-theme')
-    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-    const initial = stored ? stored === 'dark' : prefersDark
+    if (!aToken && !dToken) return
+    const themeKey = aToken ? 'admin-theme' : 'doctor-theme'
+    const stored = localStorage.getItem(themeKey)
+    if (!stored) return
+    const initial = stored === 'dark'
     setIsDark(initial)
     document.documentElement.classList.toggle('dark', initial)
     document.body.classList.toggle('dark', initial)
     document.getElementById('root')?.classList.toggle('dark', initial)
-  }, [])
+  }, [aToken, dToken])
 
   const toggleTheme = () => {
     const next = !isDark
@@ -28,16 +30,28 @@ const Navbar = () => {
     document.documentElement.classList.toggle('dark', next)
     document.body.classList.toggle('dark', next)
     document.getElementById('root')?.classList.toggle('dark', next)
-    localStorage.setItem('admin-theme', next ? 'dark' : 'light')
+    const themeKey = aToken ? 'admin-theme' : 'doctor-theme'
+    localStorage.setItem(themeKey, next ? 'dark' : 'light')
   }
 
   return (
-    <div className='sticky top-0 z-50 flex h-16 justify-between items-center px-4 sm:px-10 border-b bg-white dark:bg-slate-900 dark:border-slate-800'>
-      <div className='flex items-center gap-2 text-xs'>
-        <img onClick={() => navigate('/')} className='w-36 sm:w-40 cursor-pointer dark:invert dark:brightness-110 dark:contrast-110' src={assets.icon} alt="" />
+    <div className='sticky top-0 z-50 flex h-16 items-center px-3 sm:px-10 border-b bg-white dark:bg-slate-900 dark:border-slate-800'>
+      <button
+        type='button'
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        className='md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-200'
+        aria-label='Toggle menu'
+      >
+        <svg className='h-5 w-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
+          <path d='M3 6h18' />
+          <path d='M3 12h18' />
+          <path d='M3 18h18' />
+        </svg>
+      </button>
+
+      <div className='flex items-center gap-2 text-xs ml-auto md:ml-0 md:order-1'>
+        <img onClick={() => navigate('/')} className='w-32 sm:w-40 cursor-pointer dark:invert dark:brightness-110 dark:contrast-110' src={assets.icon} alt="" />
         <p className='border px-2.5 py-0.5 rounded-full border-gray-500 text-gray-600 dark:border-slate-600 dark:text-slate-200'>{aToken ? 'Admin' : 'Doctor'}</p>
-      </div>
-      <div className='flex items-center gap-3'>
       </div>
     </div>
   )

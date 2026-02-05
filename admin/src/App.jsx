@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { DoctorContext } from './context/DoctorContext';
 import { AdminContext } from './context/AdminContext';
 import { Route, Routes } from 'react-router-dom'
@@ -12,24 +12,26 @@ import AddDoctor from './pages/Admin/AddDoctor';
 import DoctorsList from './pages/Admin/DoctorsList';
 import DoctorDetails from './pages/Admin/DoctorDetails';
 import EditDoctor from './pages/Admin/EditDoctor';
-import Settings from './pages/Admin/Settings';
+import AdminSettings from './pages/Admin/Settings';
 import Landing from './pages/Admin/Landing';
 import Login from './pages/Login';
 import DoctorAppointments from './pages/Doctor/DoctorAppointments';
 import DoctorDashboard from './pages/Doctor/DoctorDashboard';
 import DoctorProfile from './pages/Doctor/DoctorProfile';
+import DoctorSettings from './pages/Doctor/Settings';
 
 const App = () => {
 
   const { dToken } = useContext(DoctorContext)
   const { aToken } = useContext(AdminContext)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   return dToken || aToken ? (
     <div className='bg-[#F8F9FD] dark:bg-slate-950 text-slate-900 dark:text-slate-100 h-screen overflow-hidden'>
       <ToastContainer />
-      <Navbar />
+      <Navbar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
         <div className='flex h-[calc(100vh-64px)]'>
-          <Sidebar />
+          <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
         <div className='flex-1 w-full h-full overflow-y-auto min-w-0'>
           <Routes>
           <Route path='/' element={aToken ? <Landing /> : <DoctorDashboard />} />
@@ -37,7 +39,7 @@ const App = () => {
           <Route path='/all-appointments' element={<AllAppointments />} />
           <Route path='/add-doctor' element={<AddDoctor />} />
           <Route path='/doctor-list' element={<DoctorsList />} />
-          <Route path='/settings' element={<Settings />} />
+          <Route path='/settings' element={aToken ? <AdminSettings /> : <DoctorSettings />} />
           <Route path='/doctor/:doctorId' element={<DoctorDetails />} />
           <Route path='/edit-doctor/:doctorId' element={<EditDoctor />} />
           <Route path='/doctor-dashboard' element={<DoctorDashboard />} />
