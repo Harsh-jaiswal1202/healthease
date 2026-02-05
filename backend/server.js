@@ -9,6 +9,7 @@ import adminRouter from "./routes/adminRoute.js"
 
 import * as Sentry from '@sentry/node'
 import { Integrations } from '@sentry/tracing'
+import mongoose from 'mongoose'
 
 // app config
 const app = express()
@@ -51,7 +52,7 @@ app.get("/", (req, res) => {
 // Health check
 app.get('/health', (req, res) => {
   try {
-    const mongooseReady = (typeof process !== 'undefined') && (require('mongoose').connection.readyState === 1)
+    const mongooseReady = mongoose.connection.readyState === 1
     res.json({ ok: true, dbConnected: mongooseReady })
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message })
