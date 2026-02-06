@@ -32,9 +32,20 @@ connectCloudinary()
 
 // middlewares
 app.use(express.json())
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "https://healthease-mu.vercel.app",
+  "https://healthease-ptf2.vercel.app"
+];
+
+if (process.env.ALLOWED_ORIGINS) {
+  allowedOrigins.push(...process.env.ALLOWED_ORIGINS.split(','));
+}
+
 app.use(cors(
   {
-    origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ["http://localhost:5173", "http://localhost:5174", "https://healthease-mu.vercel.app", "https://healthease-ptf2.vercel.app"],
+    origin: allowedOrigins,
     methods: ["POST", "GET", "PUT", "DELETE", "PATCH"],
     credentials: true
   }
