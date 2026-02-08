@@ -76,7 +76,7 @@ const Dashboard = () => {
 
         <div className='divide-y divide-white/70 dark:divide-slate-800'>
           {dashData.latestAppointments.slice(0, 5).map((item, index) => (
-            <div className='flex flex-col gap-3 px-5 py-4 hover:bg-white/70 dark:hover:bg-slate-800/60 sm:flex-row sm:items-center sm:gap-3 sm:px-6' key={index}>
+            <div className='max-md:mx-2 max-md:my-3 max-md:rounded-xl max-md:border max-md:border-slate-200 max-md:dark:border-slate-700 max-md:bg-white max-md:dark:bg-slate-900 max-md:p-4 max-md:shadow-sm flex flex-col gap-3 px-5 py-4 hover:bg-white/70 dark:hover:bg-slate-800/60 sm:flex-row sm:items-center sm:gap-3 sm:px-6' key={index}>
               <img className='h-10 w-10 sm:h-11 sm:w-11 rounded-full object-cover ring-2 ring-white' src={item.docData.image} alt="" />
               <div className='min-w-0 flex-1 text-sm'>
                 <p className='text-slate-900 dark:text-white font-medium'>{item.docData.name}</p>

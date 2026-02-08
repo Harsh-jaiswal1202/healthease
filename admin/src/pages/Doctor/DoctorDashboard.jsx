@@ -248,7 +248,7 @@ const DoctorDashboard = () => {
 
           <div className='divide-y divide-slate-200/60 dark:divide-slate-800/60'>
             {dashData.latestAppointments.slice(0, 5).map((item, index) => (
-              <div className='px-4 sm:px-6 py-4 hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors' key={index}>
+              <div className='max-md:mx-2 max-md:my-3 max-md:rounded-xl max-md:border max-md:border-slate-200 max-md:dark:border-slate-700 max-md:bg-white max-md:dark:bg-slate-900 max-md:p-4 max-md:shadow-sm px-4 sm:px-6 py-4 hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors' key={index}>
                 <div className='flex flex-col sm:flex-row sm:items-center gap-4'>
                   <div className='flex items-center gap-3 flex-1 min-w-[220px]'>
                     <img className='rounded-2xl w-11 h-11 object-cover ring-2 ring-white dark:ring-slate-800/80' src={item.userData.image} alt="" />

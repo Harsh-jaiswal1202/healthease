@@ -147,7 +147,7 @@ const EditDoctor = () => {
       </div>
 
       <div className='grid gap-6 lg:grid-cols-[1fr_2fr]'>
-        <div className='rounded-3xl border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-6 shadow-[0_25px_70px_-40px_rgba(15,23,42,0.45)]'>
+        <div className='rounded-3xl border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-4 sm:p-6 shadow-[0_25px_70px_-40px_rgba(15,23,42,0.45)]'>
           <p className='text-sm font-semibold text-slate-900 dark:text-white'>Profile Photo</p>
           <div className='mt-4 flex flex-col items-center gap-4'>
             <div className='h-28 w-28 overflow-hidden rounded-3xl bg-slate-100 ring-4 ring-white'>
@@ -157,20 +157,20 @@ const EditDoctor = () => {
                 <div className='flex h-full w-full items-center justify-center text-xs text-slate-400'>No preview</div>
               )}
             </div>
-            <input type='file' onChange={(e) => setDocImg(e.target.files[0])} />
+            <input type='file' className='w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20' onChange={(e) => setDocImg(e.target.files[0])} />
           </div>
 
           <div className='mt-6 grid gap-3 text-sm'>
             <label className='grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
               Status
-              <select value={status} onChange={(e) => setStatus(e.target.value)} className='h-10 rounded-xl border border-slate-200 bg-white/90 px-3 text-sm text-slate-900 dark:text-white shadow-sm'>
+              <select value={status} onChange={(e) => setStatus(e.target.value)} className='w-full h-10 rounded-xl border border-slate-200 bg-white/90 dark:bg-slate-900/70 px-3 text-sm text-slate-900 dark:text-white shadow-sm border-slate-200 dark:border-slate-700'>
                 <option value='published'>Published</option>
                 <option value='draft'>Draft</option>
               </select>
             </label>
             <label className='grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
               Verification
-              <select value={verificationStatus} onChange={(e) => setVerificationStatus(e.target.value)} className='h-10 rounded-xl border border-slate-200 bg-white/90 px-3 text-sm text-slate-900 dark:text-white shadow-sm'>
+              <select value={verificationStatus} onChange={(e) => setVerificationStatus(e.target.value)} className='w-full h-10 rounded-xl border border-slate-200 bg-white/90 dark:bg-slate-900/70 px-3 text-sm text-slate-900 dark:text-white shadow-sm border-slate-200 dark:border-slate-700'>
                 <option value='pending'>Pending</option>
                 <option value='verified'>Verified</option>
               </select>
@@ -179,71 +179,71 @@ const EditDoctor = () => {
         </div>
 
         <div className='flex flex-col gap-6'>
-          <div className='rounded-3xl border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-6 shadow-[0_25px_70px_-40px_rgba(15,23,42,0.45)]'>
+          <div className='rounded-3xl border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-4 sm:p-6 shadow-[0_25px_70px_-40px_rgba(15,23,42,0.45)]'>
             <p className='text-sm font-semibold text-slate-900 dark:text-white'>Basic Details</p>
             <div className='mt-4 grid gap-4 md:grid-cols-2'>
               <label className='grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
                 Name
-                <input value={name} onChange={(e) => setName(e.target.value)} className='h-10 rounded-xl border border-slate-200 bg-white/90 px-4 text-sm text-slate-900 dark:text-white shadow-sm' required />
+                <input value={name} onChange={(e) => setName(e.target.value)} className='w-full h-10 rounded-xl border border-slate-200 bg-white/90 dark:bg-slate-900/70 px-4 text-sm text-slate-900 dark:text-white shadow-sm border-slate-200 dark:border-slate-700' required />
               </label>
               <label className='grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
                 Email
-                <input value={email} onChange={(e) => setEmail(e.target.value)} className='h-10 rounded-xl border border-slate-200 bg-white/90 px-4 text-sm text-slate-900 dark:text-white shadow-sm' required />
+                <input value={email} onChange={(e) => setEmail(e.target.value)} className='w-full h-10 rounded-xl border border-slate-200 bg-white/90 dark:bg-slate-900/70 px-4 text-sm text-slate-900 dark:text-white shadow-sm border-slate-200 dark:border-slate-700' required />
               </label>
               <label className='grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
                 Password (optional)
-                <input value={password} onChange={(e) => setPassword(e.target.value)} className='h-10 rounded-xl border border-slate-200 bg-white/90 px-4 text-sm text-slate-900 dark:text-white shadow-sm' type='password' />
+                <input value={password} onChange={(e) => setPassword(e.target.value)} className='w-full h-10 rounded-xl border border-slate-200 bg-white/90 dark:bg-slate-900/70 px-4 text-sm text-slate-900 dark:text-white shadow-sm border-slate-200 dark:border-slate-700' type='password' />
               </label>
               <label className='grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
                 Speciality
-                <input value={speciality} onChange={(e) => setSpeciality(e.target.value)} className='h-10 rounded-xl border border-slate-200 bg-white/90 px-4 text-sm text-slate-900 dark:text-white shadow-sm' />
+                <input value={speciality} onChange={(e) => setSpeciality(e.target.value)} className='w-full h-10 rounded-xl border border-slate-200 bg-white/90 dark:bg-slate-900/70 px-4 text-sm text-slate-900 dark:text-white shadow-sm border-slate-200 dark:border-slate-700' />
               </label>
               <label className='grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
                 Degree
-                <input value={degree} onChange={(e) => setDegree(e.target.value)} className='h-10 rounded-xl border border-slate-200 bg-white/90 px-4 text-sm text-slate-900 dark:text-white shadow-sm' />
+                <input value={degree} onChange={(e) => setDegree(e.target.value)} className='w-full h-10 rounded-xl border border-slate-200 bg-white/90 dark:bg-slate-900/70 px-4 text-sm text-slate-900 dark:text-white shadow-sm border-slate-200 dark:border-slate-700' />
               </label>
               <label className='grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
                 Experience
-                <input value={experience} onChange={(e) => setExperience(e.target.value)} className='h-10 rounded-xl border border-slate-200 bg-white/90 px-4 text-sm text-slate-900 dark:text-white shadow-sm' />
+                <input value={experience} onChange={(e) => setExperience(e.target.value)} className='w-full h-10 rounded-xl border border-slate-200 bg-white/90 dark:bg-slate-900/70 px-4 text-sm text-slate-900 dark:text-white shadow-sm border-slate-200 dark:border-slate-700' />
               </label>
               <label className='grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
                 Fees
-                <input value={fees} onChange={(e) => setFees(e.target.value)} className='h-10 rounded-xl border border-slate-200 bg-white/90 px-4 text-sm text-slate-900 dark:text-white shadow-sm' type='number' />
+                <input value={fees} onChange={(e) => setFees(e.target.value)} className='w-full h-10 rounded-xl border border-slate-200 bg-white/90 dark:bg-slate-900/70 px-4 text-sm text-slate-900 dark:text-white shadow-sm border-slate-200 dark:border-slate-700' type='number' />
               </label>
             </div>
           </div>
 
-          <div className='rounded-3xl border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-6 shadow-[0_25px_70px_-40px_rgba(15,23,42,0.45)]'>
+          <div className='rounded-3xl border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-4 sm:p-6 shadow-[0_25px_70px_-40px_rgba(15,23,42,0.45)]'>
             <p className='text-sm font-semibold text-slate-900 dark:text-white'>Clinic Address</p>
             <div className='mt-4 grid gap-4 md:grid-cols-2'>
               <label className='grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
                 Clinic name
-                <input value={clinicName} onChange={(e) => setClinicName(e.target.value)} className='h-10 rounded-xl border border-slate-200 bg-white/90 px-4 text-sm text-slate-900 dark:text-white shadow-sm' />
+                <input value={clinicName} onChange={(e) => setClinicName(e.target.value)} className='w-full h-10 rounded-xl border border-slate-200 bg-white/90 dark:bg-slate-900/70 px-4 text-sm text-slate-900 dark:text-white shadow-sm border-slate-200 dark:border-slate-700' />
               </label>
               <label className='grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
                 Address line 1
-                <input value={address1} onChange={(e) => setAddress1(e.target.value)} className='h-10 rounded-xl border border-slate-200 bg-white/90 px-4 text-sm text-slate-900 dark:text-white shadow-sm' />
+                <input value={address1} onChange={(e) => setAddress1(e.target.value)} className='w-full h-10 rounded-xl border border-slate-200 bg-white/90 dark:bg-slate-900/70 px-4 text-sm text-slate-900 dark:text-white shadow-sm border-slate-200 dark:border-slate-700' />
               </label>
               <label className='grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
                 Address line 2
-                <input value={address2} onChange={(e) => setAddress2(e.target.value)} className='h-10 rounded-xl border border-slate-200 bg-white/90 px-4 text-sm text-slate-900 dark:text-white shadow-sm' />
+                <input value={address2} onChange={(e) => setAddress2(e.target.value)} className='w-full h-10 rounded-xl border border-slate-200 bg-white/90 dark:bg-slate-900/70 px-4 text-sm text-slate-900 dark:text-white shadow-sm border-slate-200 dark:border-slate-700' />
               </label>
               <label className='grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
                 City
-                <input value={city} onChange={(e) => setCity(e.target.value)} className='h-10 rounded-xl border border-slate-200 bg-white/90 px-4 text-sm text-slate-900 dark:text-white shadow-sm' />
+                <input value={city} onChange={(e) => setCity(e.target.value)} className='w-full h-10 rounded-xl border border-slate-200 bg-white/90 dark:bg-slate-900/70 px-4 text-sm text-slate-900 dark:text-white shadow-sm border-slate-200 dark:border-slate-700' />
               </label>
               <label className='grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
                 State
-                <input value={stateRegion} onChange={(e) => setStateRegion(e.target.value)} className='h-10 rounded-xl border border-slate-200 bg-white/90 px-4 text-sm text-slate-900 dark:text-white shadow-sm' />
+                <input value={stateRegion} onChange={(e) => setStateRegion(e.target.value)} className='w-full h-10 rounded-xl border border-slate-200 bg-white/90 dark:bg-slate-900/70 px-4 text-sm text-slate-900 dark:text-white shadow-sm border-slate-200 dark:border-slate-700' />
               </label>
               <label className='grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
                 Pincode
-                <input value={pincode} onChange={(e) => setPincode(e.target.value)} className='h-10 rounded-xl border border-slate-200 bg-white/90 px-4 text-sm text-slate-900 dark:text-white shadow-sm' />
+                <input value={pincode} onChange={(e) => setPincode(e.target.value)} className='w-full h-10 rounded-xl border border-slate-200 bg-white/90 dark:bg-slate-900/70 px-4 text-sm text-slate-900 dark:text-white shadow-sm border-slate-200 dark:border-slate-700' />
               </label>
             </div>
           </div>
 
-          <div className='rounded-3xl border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-6 shadow-[0_25px_70px_-40px_rgba(15,23,42,0.45)]'>
+          <div className='rounded-3xl border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-4 sm:p-6 shadow-[0_25px_70px_-40px_rgba(15,23,42,0.45)]'>
             <p className='text-sm font-semibold text-slate-900 dark:text-white'>Availability</p>
             <div className='mt-4 flex flex-wrap gap-2'>
               {availabilityDays.map((day, index) => (
@@ -264,7 +264,7 @@ const EditDoctor = () => {
                   type='time'
                   value={availabilityDays[0]?.start}
                   onChange={(e) => setAvailabilityDays((prev) => prev.map((item) => ({ ...item, start: e.target.value })))}
-                  className='h-10 rounded-xl border border-slate-200 bg-white/90 px-4 text-sm text-slate-900 dark:text-white shadow-sm'
+                  className='w-full h-10 rounded-xl border border-slate-200 bg-white/90 dark:bg-slate-900/70 px-4 text-sm text-slate-900 dark:text-white shadow-sm border-slate-200 dark:border-slate-700'
                 />
               </label>
               <label className='grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
@@ -273,12 +273,12 @@ const EditDoctor = () => {
                   type='time'
                   value={availabilityDays[0]?.end}
                   onChange={(e) => setAvailabilityDays((prev) => prev.map((item) => ({ ...item, end: e.target.value })))}
-                  className='h-10 rounded-xl border border-slate-200 bg-white/90 px-4 text-sm text-slate-900 dark:text-white shadow-sm'
+                  className='w-full h-10 rounded-xl border border-slate-200 bg-white/90 dark:bg-slate-900/70 px-4 text-sm text-slate-900 dark:text-white shadow-sm border-slate-200 dark:border-slate-700'
                 />
               </label>
               <label className='grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
                 Slot duration
-                <select value={slotDuration} onChange={(e) => setSlotDuration(e.target.value)} className='h-10 rounded-xl border border-slate-200 bg-white/90 px-3 text-sm text-slate-900 dark:text-white shadow-sm'>
+                <select value={slotDuration} onChange={(e) => setSlotDuration(e.target.value)} className='w-full h-10 rounded-xl border border-slate-200 bg-white/90 dark:bg-slate-900/70 px-3 text-sm text-slate-900 dark:text-white shadow-sm border-slate-200 dark:border-slate-700'>
                   <option value='15'>15 mins</option>
                   <option value='30'>30 mins</option>
                   <option value='45'>45 mins</option>
@@ -288,33 +288,33 @@ const EditDoctor = () => {
             </div>
             <label className='mt-4 grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
               Break time (minutes)
-              <input value={breakMinutes} onChange={(e) => setBreakMinutes(e.target.value)} className='h-10 rounded-xl border border-slate-200 bg-white/90 px-4 text-sm text-slate-900 dark:text-white shadow-sm' type='number' min='0' />
+              <input value={breakMinutes} onChange={(e) => setBreakMinutes(e.target.value)} className='w-full h-10 rounded-xl border border-slate-200 bg-white/90 dark:bg-slate-900/70 px-4 text-sm text-slate-900 dark:text-white shadow-sm border-slate-200 dark:border-slate-700' type='number' min='0' />
             </label>
           </div>
 
-          <div className='rounded-3xl border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-6 shadow-[0_25px_70px_-40px_rgba(15,23,42,0.45)]'>
+          <div className='rounded-3xl border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-4 sm:p-6 shadow-[0_25px_70px_-40px_rgba(15,23,42,0.45)]'>
             <p className='text-sm font-semibold text-slate-900 dark:text-white'>About</p>
-            <textarea value={about} onChange={(e) => setAbout(e.target.value)} className='mt-4 min-h-[140px] w-full rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 text-sm text-slate-900 dark:text-white shadow-sm' />
+            <textarea value={about} onChange={(e) => setAbout(e.target.value)} className='mt-4 min-h-[140px] w-full rounded-2xl border border-slate-200 bg-white/90 dark:bg-slate-900/70 px-4 py-3 text-sm text-slate-900 dark:text-white shadow-sm border-slate-200 dark:border-slate-700' />
           </div>
 
-          <div className='rounded-3xl border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-6 shadow-[0_25px_70px_-40px_rgba(15,23,42,0.45)]'>
+          <div className='rounded-3xl border border-white/60 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-4 sm:p-6 shadow-[0_25px_70px_-40px_rgba(15,23,42,0.45)]'>
             <p className='text-sm font-semibold text-slate-900 dark:text-white'>Documents</p>
             <div className='mt-4 grid gap-4 md:grid-cols-2'>
               <label className='grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
                 Medical license
-                <input onChange={(e) => setLicenseFile(e.target.files[0])} type='file' />
+                <input className='w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20' onChange={(e) => setLicenseFile(e.target.files[0])} type='file' />
               </label>
               <label className='grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
                 Degree certificate
-                <input onChange={(e) => setDegreeCertFile(e.target.files[0])} type='file' />
+                <input className='w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20' onChange={(e) => setDegreeCertFile(e.target.files[0])} type='file' />
               </label>
               <label className='grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
                 ID proof
-                <input onChange={(e) => setIdProofFile(e.target.files[0])} type='file' />
+                <input className='w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20' onChange={(e) => setIdProofFile(e.target.files[0])} type='file' />
               </label>
               <label className='grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200'>
                 Certifications
-                <input onChange={(e) => setCertFiles(Array.from(e.target.files || []))} type='file' multiple />
+                <input className='w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20' onChange={(e) => setCertFiles(Array.from(e.target.files || []))} type='file' multiple />
               </label>
             </div>
           </div>

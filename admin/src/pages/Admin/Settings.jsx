@@ -343,7 +343,7 @@ const Settings = () => {
                 <button
                   onClick={() => setShowDeleteConfirm(true)}
                   disabled={loading.delete}
-                  className="btn-pill bg-gradient-to-r from-primary to-cyan-500 text-white text-sm font-semibold shadow-[0_10px_30px_-20px_rgba(59,130,246,0.8)] hover:opacity-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full sm:w-auto px-6 py-3 rounded-full bg-gradient-to-r from-primary to-cyan-500 text-white text-sm font-semibold shadow-[0_10px_30px_-20px_rgba(59,130,246,0.8)] hover:opacity-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {loading.delete ? 'Deleting...' : 'Delete account'}
                 </button>

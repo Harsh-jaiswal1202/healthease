@@ -35,16 +35,16 @@ const DoctorDetails = () => {
           <p className='text-sm text-slate-500 dark:text-slate-400'>{doctor.speciality}</p>
         </div>
         <div className='flex flex-wrap items-center gap-3'>
-          <button onClick={() => navigate(`/edit-doctor/${doctor._id}`)} className='h-10 rounded-full border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-600 dark:text-slate-300 shadow-sm hover:border-slate-300'>
+          <button onClick={() => navigate(`/edit-doctor/${doctor._id}`)} className='h-10 rounded-full border border-slate-200 bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white px-5 text-sm font-semibold text-slate-600 shadow-sm hover:border-slate-300'>
             Edit
           </button>
-          <button onClick={() => verifyDoctor(doctor._id, doctor.verificationStatus === 'verified' ? 'pending' : 'verified')} className='h-10 rounded-full border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-600 dark:text-slate-300 shadow-sm hover:border-slate-300'>
+          <button onClick={() => verifyDoctor(doctor._id, doctor.verificationStatus === 'verified' ? 'pending' : 'verified')} className='h-10 rounded-full border border-slate-200 bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white px-5 text-sm font-semibold text-slate-600 shadow-sm hover:border-slate-300'>
             {doctor.verificationStatus === 'verified' ? 'Unverify' : 'Verify'}
           </button>
-          <button onClick={() => setDoctorStatus(doctor._id, doctor.status === 'published' ? 'draft' : 'published')} className='h-10 rounded-full border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-600 dark:text-slate-300 shadow-sm hover:border-slate-300'>
+          <button onClick={() => setDoctorStatus(doctor._id, doctor.status === 'published' ? 'draft' : 'published')} className='h-10 rounded-full border border-slate-200 bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white px-5 text-sm font-semibold text-slate-600 shadow-sm hover:border-slate-300'>
             {doctor.status === 'published' ? 'Unpublish' : 'Publish'}
           </button>
-          <button onClick={() => deactivateDoctor(doctor._id)} className='h-10 rounded-full border border-rose-200 bg-rose-50 px-5 text-sm font-semibold text-rose-600 shadow-sm hover:border-rose-300'>
+          <button onClick={() => deactivateDoctor(doctor._id)} className='h-10 rounded-full border border-rose-200 bg-rose-50 dark:bg-rose-900/20 dark:border-rose-900/50 dark:text-rose-400 px-5 text-sm font-semibold text-rose-600 shadow-sm hover:border-rose-300'>
             Deactivate
           </button>
         </div>

@@ -14,14 +14,11 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
 
   useEffect(() => {
     if (!aToken && !dToken) return
-    const themeKey = aToken ? 'admin-theme' : 'doctor-theme'
-    const stored = localStorage.getItem(themeKey)
-    if (!stored) return
-    const initial = stored === 'dark'
-    setIsDark(initial)
-    document.documentElement.classList.toggle('dark', initial)
-    document.body.classList.toggle('dark', initial)
-    document.getElementById('root')?.classList.toggle('dark', initial)
+    // Force light mode on load
+    setIsDark(false)
+    document.documentElement.classList.remove('dark')
+    document.body.classList.remove('dark')
+    document.getElementById('root')?.classList.remove('dark')
   }, [aToken, dToken])
 
   const toggleTheme = () => {
@@ -50,7 +47,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
       </button>
 
       <div className='flex items-center gap-2 text-xs ml-auto md:ml-0 md:order-1'>
-        <img onClick={() => navigate('/')} className='w-32 sm:w-40 cursor-pointer dark:invert dark:brightness-110 dark:contrast-110' src={assets.icon} alt="" />
+        <img onClick={() => navigate('/')} className='w-32 sm:w-40 cursor-pointer dark:invert dark:hue-rotate-180' src={assets.icon} alt="" />
         <p className='border px-2.5 py-0.5 rounded-full border-gray-500 text-gray-600 dark:border-slate-600 dark:text-slate-200'>{aToken ? 'Admin' : 'Doctor'}</p>
       </div>
     </div>

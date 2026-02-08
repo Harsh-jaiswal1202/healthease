@@ -61,7 +61,7 @@ const DoctorAppointments = () => {
                 ? 'border-amber-200 text-amber-600 bg-amber-50'
                 : 'border-slate-200 text-slate-500 bg-slate-50'
             return (
-              <div key={item._id || index} className='border-b border-slate-200/60 dark:border-slate-800/60 px-3 sm:px-6 py-4'>
+              <div key={item._id || index} className='max-md:mx-2 max-md:my-3 max-md:rounded-xl max-md:border max-md:border-slate-200 max-md:dark:border-slate-700 max-md:bg-white max-md:dark:bg-slate-900 max-md:p-4 max-md:shadow-sm md:border-b md:border-slate-200/60 md:dark:border-slate-800/60 md:px-6 md:py-4'>
                 <div className='md:hidden grid gap-3'>
                   <div className='flex items-start gap-3'>
                     <img src={item.userData.image} className='h-12 w-12 rounded-2xl object-cover ring-2 ring-white' alt="" />

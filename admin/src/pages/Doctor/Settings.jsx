@@ -168,7 +168,7 @@ const Settings = () => {
 
         <div className="grid gap-6">
           <section className="bg-white/90 dark:bg-slate-900/80 backdrop-blur border border-slate-200/60 dark:border-slate-800/60 rounded-3xl shadow-[0_18px_60px_-40px_rgba(15,23,42,0.5)] p-4 sm:p-6">
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+            <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-[0.24em]">
                   Theme
@@ -198,7 +198,7 @@ const Settings = () => {
           </section>
 
           <section className="bg-white/90 dark:bg-slate-900/80 backdrop-blur border border-slate-200/60 dark:border-slate-800/60 rounded-3xl shadow-[0_18px_60px_-40px_rgba(15,23,42,0.5)] p-4 sm:p-6">
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+            <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-[0.24em]">
                   Change Email
@@ -246,7 +246,7 @@ const Settings = () => {
           </section>
 
           <section className="bg-white/90 dark:bg-slate-900/80 backdrop-blur border border-slate-200/60 dark:border-slate-800/60 rounded-3xl shadow-[0_18px_60px_-40px_rgba(15,23,42,0.5)] p-4 sm:p-6">
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+            <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-[0.24em]">
                   Change Password
@@ -304,7 +304,7 @@ const Settings = () => {
 
           <section className="relative overflow-hidden bg-gradient-to-br from-red-50 via-white to-rose-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 border border-rose-200/60 dark:border-rose-900/40 rounded-3xl shadow-[0_18px_60px_-40px_rgba(190,18,60,0.35)] p-4 sm:p-6">
             <div className="absolute -top-24 -right-20 h-56 w-56 rounded-full bg-rose-200/30 blur-3xl"></div>
-            <div className="relative flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+            <div className="relative flex items-start justify-between gap-4">
               <div>
                 <p className="text-[11px] font-semibold text-rose-400 uppercase tracking-[0.24em]">
                   Delete Account
@@ -343,7 +343,7 @@ const Settings = () => {
                 <button
                   onClick={() => setShowDeleteConfirm(true)}
                   disabled={loading.delete}
-                  className="w-full sm:w-auto btn-pill bg-gradient-to-r from-primary to-cyan-500 text-white text-sm font-semibold shadow-[0_10px_30px_-20px_rgba(59,130,246,0.8)] hover:opacity-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full sm:w-auto px-6 py-3 rounded-full bg-gradient-to-r from-primary to-cyan-500 text-white text-sm font-semibold shadow-[0_10px_30px_-20px_rgba(59,130,246,0.8)] hover:opacity-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {loading.delete ? 'Deleting...' : 'Delete account'}
                 </button>

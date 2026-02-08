@@ -13,12 +13,9 @@ const AppContextProvider = (props) => {
     const [token, setToken] = useState(localStorage.getItem('token') ? localStorage.getItem('token') : '')
     const [userData, setUserData] = useState(false)
     const [profileDashboard, setProfileDashboard] = useState(null)
-    
+
     // Theme state
-    const [isDarkMode, setIsDarkMode] = useState(() => {
-        const savedTheme = localStorage.getItem('theme')
-        return savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)
-    })
+    const [isDarkMode, setIsDarkMode] = useState(false)
 
     // Update theme in localStorage and DOM
     useEffect(() => {
