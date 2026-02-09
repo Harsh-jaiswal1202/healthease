@@ -6,6 +6,9 @@ import connectCloudinary from "./config/cloudinary.js"
 import userRouter from "./routes/userRoute.js"
 import doctorRouter from "./routes/doctorRoute.js"
 import adminRouter from "./routes/adminRoute.js"
+import dns from 'node:dns'
+
+dns.setDefaultResultOrder('ipv4first')
 
 import * as Sentry from '@sentry/node'
 import { Integrations } from '@sentry/tracing'

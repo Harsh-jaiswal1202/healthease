@@ -25,18 +25,7 @@ const hashOtp = (otp) => {
     return crypto.createHash('sha256').update(otp).digest('hex')
 }
 
-const getEmailTransporter = () => {
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-        return null
-    }
-    return nodemailer.createTransport({
-        service: process.env.EMAIL_SERVICE || 'gmail',
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }
-    })
-}
+// getEmailTransporter removed - using Resend API
 
 // API to register user
 const registerUser = async (req, res) => {
@@ -177,10 +166,16 @@ const forgotPassword = async (req, res) => {
         user.resetOtpExpires = Date.now() + otpExpiryMs
         await user.save()
 
-        const transporter = getEmailTransporter()
-        if (!transporter) {
-            return res.json({ success: false, message: "Email service not configured" })
-        }
+        const transporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false, // Use STARTTLS
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            },
+            family: 4 // Force IPv4 to avoid ENETUNREACH on some platforms
+        });
 
         const mailOptions = {
             from: process.env.EMAIL_USER,
@@ -198,7 +193,7 @@ const forgotPassword = async (req, res) => {
             `
         }
 
-        await transporter.sendMail(mailOptions)
+        await transporter.sendMail(mailOptions);
         res.json({ success: true, message: "OTP sent successfully" })
     } catch (error) {
         console.log(error)

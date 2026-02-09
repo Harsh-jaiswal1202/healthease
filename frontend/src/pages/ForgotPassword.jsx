@@ -45,7 +45,7 @@ const ForgotPassword = () => {
   }
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4'>
+    <div className='h-screen overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4'>
       <div className='w-full max-w-md bg-white rounded-3xl shadow-2xl p-6 sm:p-8'>
         <button
           onClick={() => navigate('/login')}
@@ -76,9 +76,8 @@ const ForgotPassword = () => {
           <button
             type='submit'
             disabled={loading}
-            className={`w-full py-3.5 bg-gradient-to-r from-primary to-purple-600 text-white rounded-xl font-semibold text-base shadow-lg hover:shadow-xl transition-all ${
-              loading ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
+            className={`w-full py-3.5 bg-gradient-to-r from-primary to-purple-600 text-white rounded-xl font-semibold text-base shadow-lg hover:shadow-xl transition-all ${loading ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
           >
             {loading ? 'Sending...' : 'Send OTP'}
           </button>

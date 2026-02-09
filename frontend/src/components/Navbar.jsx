@@ -5,11 +5,12 @@ import { useNavigate } from 'react-router-dom'
 import { AppContext } from '../context/AppContext'
 
 const Navbar = () => {
-  
+
 
   const navigate = useNavigate()
 
   const [showMenu, setShowMenu] = useState(false)
+  const [showProfileMenu, setShowProfileMenu] = useState(false)
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
   const { token, setToken, userData } = useContext(AppContext)
 
@@ -28,10 +29,10 @@ const Navbar = () => {
       <div className='flex items-center gap-4 '>
         {
           token && userData
-            ? <div className='flex items-center gap-2 cursor-pointer group relative'>
+            ? <div className='flex items-center gap-2 cursor-pointer relative' onClick={() => setShowProfileMenu(prev => !prev)}>
               <img loading="lazy" className='w-8 rounded-full' src={userData.image} alt="" />
               <img className='w-2.5' src={assets.dropdown_icon} alt="" />
-              <div className='absolute top-0 right-0 pt-14 text-base font-medium text-gray-600 dark:text-gray-300 z-20 hidden group-hover:block'>
+              <div className={`absolute top-0 right-0 pt-14 text-base font-medium text-gray-600 dark:text-gray-300 z-20 ${showProfileMenu ? 'block' : 'hidden'}`}>
                 <div className='min-w-48 bg-gray-50 dark:bg-gray-800 rounded flex flex-col gap-4 p-4 shadow-lg'>
                   <p onClick={() => navigate('/my-profile')} className='hover:text-black dark:hover:text-white cursor-pointer'>My Profile</p>
                   <p onClick={() => navigate('/my-appointments')} className='hover:text-black dark:hover:text-white cursor-pointer'>My Appointments</p>
@@ -41,19 +42,19 @@ const Navbar = () => {
               </div>
             </div>
             : <div className='hidden md:flex items-center gap-3'>
-                <button 
-                  onClick={() => navigate('/login', { state: { initialTab: 'login' } })} 
-                  className='bg-white dark:bg-gray-800 text-primary border-2 border-primary px-6 py-2.5 rounded-full font-semibold hover:bg-primary/5 dark:hover:bg-primary/10 transition-all duration-300 shadow-sm hover:shadow-md'
-                >
-                  Login
-                </button>
-                <button 
-                  onClick={() => navigate('/login', { state: { initialTab: 'signup' } })} 
-                  className='bg-primary text-white px-6 py-2.5 rounded-full font-semibold hover:bg-primary/90 dark:hover:bg-primary/80 transition-all duration-300 shadow-md hover:shadow-lg'
-                >
-                  Sign Up
-                </button>
-              </div>
+              <button
+                onClick={() => navigate('/login', { state: { initialTab: 'login' } })}
+                className='bg-white dark:bg-gray-800 text-primary border-2 border-primary px-6 py-2.5 rounded-full font-semibold hover:bg-primary/5 dark:hover:bg-primary/10 transition-all duration-300 shadow-sm hover:shadow-md'
+              >
+                Login
+              </button>
+              <button
+                onClick={() => navigate('/login', { state: { initialTab: 'signup' } })}
+                className='bg-primary text-white px-6 py-2.5 rounded-full font-semibold hover:bg-primary/90 dark:hover:bg-primary/80 transition-all duration-300 shadow-md hover:shadow-lg'
+              >
+                Sign Up
+              </button>
+            </div>
         }
         {/* Hamburger removed per request */}
 

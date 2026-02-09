@@ -22,13 +22,14 @@ const ResetPassword = lazy(() => import('./pages/ResetPassword'))
 // const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 const App = () => {
   const location = useLocation()
-  const isLoginPage = location.pathname === '/login'
   const isHomePage = location.pathname === '/'
+  const hideNavbarRoutes = ['/login', '/forgot-password', '/verify-otp', '/reset-password']
+  const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname)
 
   return (
     <div className='w-full bg-white dark:bg-gray-900 transition-colors duration-300 min-h-screen'>
       <ToastContainer />
-      {!isLoginPage && <Navbar />}
+      {!shouldHideNavbar && <Navbar />}
       <Suspense fallback={<div className='min-h-screen flex items-center justify-center p-4'>Loading...</div>}>
         <Routes>
           <Route path='/' element={<Home />} />
