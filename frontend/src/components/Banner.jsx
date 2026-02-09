@@ -17,33 +17,38 @@ const Banner = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Animate elements on scroll
-      gsap.from(textRef.current, {
-        opacity: 0,
-        x: -50,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: bannerRef.current,
-          start: 'top 70%',
-          toggleActions: 'play none none reverse'
-        }
-      })
+      // Only run animations if screen width is > 768px
+      const mm = gsap.matchMedia();
 
-      // Removed GSAP image animation to prevent conflicts
-      // Image animations are now handled by Framer Motion only
+      mm.add("(min-width: 768px)", () => {
+        // Animate elements on scroll
+        gsap.from(textRef.current, {
+          opacity: 0,
+          x: -50,
+          duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: bannerRef.current,
+            start: 'top 70%',
+            toggleActions: 'play none none reverse'
+          }
+        })
 
-      gsap.from(buttonRef.current, {
-        opacity: 0,
-        y: 20,
-        duration: 0.8,
-        ease: 'back.out(1.7)',
-        scrollTrigger: {
-          trigger: bannerRef.current,
-          start: 'top 70%',
-          toggleActions: 'play none none reverse'
-        }
-      })
+        // Removed GSAP image animation to prevent conflicts
+        // Image animations are now handled by Framer Motion only
+
+        gsap.from(buttonRef.current, {
+          opacity: 0,
+          y: 20,
+          duration: 0.8,
+          ease: 'back.out(1.7)',
+          scrollTrigger: {
+            trigger: bannerRef.current,
+            start: 'top 70%',
+            toggleActions: 'play none none reverse'
+          }
+        })
+      });
 
       // Removed floating animation that was causing conflicts
     }, bannerRef)
@@ -52,21 +57,22 @@ const Banner = () => {
   }, [])
 
   return (
-    <div 
+    <div
       ref={bannerRef}
       className='relative flex flex-col md:flex-row bg-gradient-to-br from-primary via-purple-600 to-blue-600 overflow-visible shadow-2xl px-6 sm:px-10 md:px-14 lg:px-16 mt-0 mb-0'
     >
-      {/* Animated Background */}
-      <AnimatedBackground variant="intense" />
-      
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
+      {/* Animated Background - Hidden on mobile */}
+      <div className="hidden md:block">
+        <AnimatedBackground variant="intense" />
+      </div>
+
+      {/* Animated background elements - Hidden on mobile */}
+      <div className="hidden md:block absolute inset-0 overflow-hidden">
         <motion.div
           className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
             x: [0, -30, 0],
-            y: [0, 20, 0],
           }}
           transition={{
             duration: 6,
@@ -87,7 +93,7 @@ const Banner = () => {
             ease: "easeInOut"
           }}
         />
-        
+
         {/* Animated waves */}
         {[...Array(3)].map((_, i) => (
           <motion.div
@@ -118,7 +124,7 @@ const Banner = () => {
       {/* Left Side */}
       <div className='relative z-10 flex-1 py-12 sm:py-16 md:py-20 lg:py-24 flex flex-col justify-center'>
         <div ref={textRef}>
-          <motion.h2 
+          <motion.h2
             className='text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4'
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -126,7 +132,7 @@ const Banner = () => {
           >
             Book Appointment
           </motion.h2>
-          <motion.p 
+          <motion.p
             className='text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold text-white/90 mb-8'
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -135,20 +141,20 @@ const Banner = () => {
             With <span className="bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">100+ Trusted Doctors</span>
           </motion.p>
         </div>
-        
-        <motion.button 
+
+        <motion.button
           ref={buttonRef}
-          onClick={() => { navigate('/login'); scrollTo(0, 0) }} 
+          onClick={() => { navigate('/login'); scrollTo(0, 0) }}
           className='group relative bg-white/95 backdrop-blur-sm text-sm sm:text-base text-[#595959] px-8 py-4 rounded-full mt-6 shadow-xl hover:shadow-2xl transition-all duration-300 font-semibold w-fit overflow-hidden'
           whileHover={{ scale: 1.05, y: -2 }}
           whileTap={{ scale: 0.95 }}
         >
           <span className="relative z-10 flex items-center gap-2">
             Create account
-            <motion.svg 
+            <motion.svg
               className="w-5 h-5"
-              fill="none" 
-              stroke="currentColor" 
+              fill="none"
+              stroke="currentColor"
               viewBox="0 0 24 24"
               animate={{ x: [0, 5, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
@@ -168,29 +174,29 @@ const Banner = () => {
           ref={imageRef}
           className="relative h-full"
           initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ 
-            opacity: 1, 
+          animate={{
+            opacity: 1,
             scale: 1,
             y: [0, -8, 0]
           }}
-          transition={{ 
+          transition={{
             opacity: { duration: 0.8 },
             scale: { duration: 0.8 },
             y: { duration: 3, repeat: Infinity, ease: "easeInOut" }
           }}
-          style={{ 
+          style={{
             opacity: 1,
             visibility: 'visible',
             display: 'block'
           }}
         >
-          <img 
+          <img
             loading="lazy"
-            className='w-full absolute bottom-0 right-0 max-w-md drop-shadow-2xl' 
-            src={assets.appointment_img} 
+            className='w-full absolute bottom-0 right-0 max-w-md drop-shadow-2xl'
+            src={assets.appointment_img}
             alt="Appointment"
-            style={{ 
-              opacity: 1, 
+            style={{
+              opacity: 1,
               visibility: 'visible',
               display: 'block',
               position: 'absolute',
@@ -200,7 +206,7 @@ const Banner = () => {
           />
           {/* Glow effect */}
           <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent pointer-events-none"></div>
-          
+
           {/* Enhanced floating particles effect */}
           {[...Array(10)].map((_, i) => (
             <motion.div
