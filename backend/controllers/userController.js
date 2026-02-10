@@ -167,18 +167,17 @@ const forgotPassword = async (req, res) => {
         await user.save()
 
         const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 587,
+            host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+            port: parseInt(process.env.EMAIL_PORT) || 587,
             secure: false, // Use STARTTLS
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
-            },
-            family: 4 // Force IPv4 to avoid ENETUNREACH on some platforms
+            }
         });
 
         const mailOptions = {
-            from: process.env.EMAIL_USER,
+            from: `${process.env.EMAIL_FROM_NAME || 'HealthEase'} <${process.env.EMAIL_FROM_ADDRESS || process.env.EMAIL_USER}>`,
             to: email,
             subject: "Your HealthEase OTP",
             text: `Your OTP is ${otp}. It expires in 10 minutes.`,
